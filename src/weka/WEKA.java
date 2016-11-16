@@ -14,6 +14,7 @@ import weka.classifiers.Classifier;
 import weka.core.Instances;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.neural.multilayerperceptron.BackPropagation;
 import weka.core.DenseInstance;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.*;
@@ -33,6 +34,7 @@ public class WEKA {
     public static void main(String[] args) throws Exception {
         // IMPORT file *.arff
         WEKA w = new WEKA();
+        String[] options = weka.core.Utils.splitOptions("-R 1");;
         
         //Pilihan SKEMA
         boolean validasi = false;
@@ -89,6 +91,7 @@ public class WEKA {
                     {
                         nB.buildClassifier(outputTrain);
                         eval.crossValidateModel(nB, outputTrain, 10, new Random(1));
+                        
                         //OUTPUT
                         System.out.println(eval.toSummaryString("=== Stratified cross-validation ===\n" +"=== Summary ===",true));
                         System.out.println(eval.toClassDetailsString("=== Detailed Accuracy By Class ==="));
