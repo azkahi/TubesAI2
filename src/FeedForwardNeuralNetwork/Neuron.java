@@ -17,8 +17,6 @@ public class Neuron  {
     
     public final static double DEFAULT_BIAS_VALUE = 1.0;
     
-    protected double biasInputValue;
-
     // weights to apply to inputs (num inputs + 1 for the bias)
     protected List<Double> inputWeights;
 
@@ -26,20 +24,48 @@ public class Neuron  {
     protected List<Double> error;
 
     // last change in each weight
-    protected List<Double> lastWeightDeltas;
-
+    protected List<Double> updatedWeights;
+    
+    //value
+    protected double value;
+    
     // index in the weight vector of the bias weight (always at the end of the array)
     protected int biasIndex;
     
-    public Neuron(int number , double input_bias){
-        biasInputValue = input_bias;
-        
+    public Neuron(){
         inputWeights = new ArrayList<Double>();
         error = new ArrayList<Double>();
-        lastWeightDeltas = new ArrayList<Double>();
+        updatedWeights = new ArrayList<Double>();
+        value = 0;
         
-        //biasIndex = number;
+    }
+    
+    public double getValue(){
+        return value;
+    }
+    
+    public void setValue(double val){
+        value = val;
+    }
+    
+    public void setError(double[] inputs){
+        for (int i=0; i < inputs.length ; i++){
+            inputWeights.add(inputs[i]);
+        }
+    }
+    
+    public void setWeights(List<Double> inweights){
+        //include bias weight
+        for (int i=0; i < inweights.size() ; i++){
+            inputWeights.add(inweights.get(i));
+        }  
+    }
         
+     public void setUpdatedWeights(List<Double> inweights){
+        //include bias weight
+        for (int i=0; i < inweights.size() ; i++){
+            updatedWeights.add(inweights.get(i));
+        }  
     }
     
     public double preactivation(Instance instance){
@@ -65,7 +91,7 @@ public class Neuron  {
         }
 
         // add the bias output
-        result += (biasInputValue * inputWeights.get(biasIndex).doubleValue());
+        result += (DEFAULT_BIAS_VALUE * inputWeights.get(inputWeights.size()-1).doubleValue());
 
         return result;
     }
@@ -82,7 +108,7 @@ public class Neuron  {
         }
 
         // add the bias output
-        result += (biasInputValue * inputWeights.get(biasIndex).doubleValue());
+       // result += (DEFAULT_BIAS_VALUE * inputWeights.get(biasIndex).doubleValue());
 
         return result;
     }
@@ -108,7 +134,7 @@ public class Neuron  {
     
     public List<Double> getLastWeightDeltas()
     {
-        return lastWeightDeltas;
+        return updatedWeights;
     }
 
     public List<Double> getWeights()
@@ -121,12 +147,6 @@ public class Neuron  {
         return biasIndex;
     }
     
-    /**
-     * @return
-     */
-    public double getBiasInputValue()
-    {
-    	return biasInputValue;
-    }
+ 
 
 }
