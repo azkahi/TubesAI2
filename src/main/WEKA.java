@@ -1,7 +1,7 @@
 /*
  * Made by Ari Pratama and Azka Hanif
  */
-package weka;
+package main;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
@@ -14,10 +14,11 @@ import weka.classifiers.Classifier;
 import weka.core.Instances;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
-import weka.classifiers.neural.multilayerperceptron.BackPropagation;
 import weka.core.DenseInstance;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.*;
+
+import FeedForwardNeuralNetwork.*;
 
 public class WEKA {
     

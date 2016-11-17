@@ -1,4 +1,4 @@
-package weka;
+package FeedForwardNeuralNetwork;
 
 import java.io.Serializable;
 import java.util.Random;
