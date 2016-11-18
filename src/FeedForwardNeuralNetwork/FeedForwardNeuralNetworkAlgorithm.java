@@ -123,7 +123,7 @@ public class FeedForwardNeuralNetworkAlgorithm {
     } 
     
     public void updateModel(){
-        double [] err = countOutput(instances.get(0));
+        double [] err = countOutput(curr_instance);
         if (hidden_layers == 0){
             double[] error = countOutputError(curr_instance);
             for (int i=0 ; i<neurons[1].length; i++){
