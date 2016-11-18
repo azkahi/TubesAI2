@@ -141,6 +141,9 @@ public class FeedForwardNeuralNetworkAlgorithm {
         double[] result = new double[classnum];
         for (int i=0; i<classnum; i++){
             double out = neurons[neurons.length-1][i].getValue();
+            double expectedValue;
+            if ((i - instance.classValue()) == 0) expectedValue = 1.0;
+            else expectedValue = 0.0;
             result[i] = out * (1-out) * (instance.classValue() - out);
         }
         return result;
