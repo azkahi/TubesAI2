@@ -18,7 +18,7 @@ import weka.core.Instances;
 public class coba {
     public static void main(String[] args) throws Exception {
         BufferedReader breader = null;
-        breader = new BufferedReader(new FileReader("src\\main\\iris.arff"));
+        breader = new BufferedReader(new FileReader("C:\\Users\\Frys\\Desktop\\Java\\AI\\Weka\\TubesAI2\\src\\main\\iris.arff"));
         Instances inputTrain = new Instances (breader);
         inputTrain.setClassIndex(inputTrain.numAttributes() -1);
         breader.close();

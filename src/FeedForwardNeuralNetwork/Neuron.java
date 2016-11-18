@@ -49,6 +49,7 @@ public class Neuron  {
     }
     
     public void setError(double[] inputs){
+        inputWeights.clear();
         for (int i=0; i < inputs.length ; i++){
             inputWeights.add(inputs[i]);
         }
@@ -56,6 +57,7 @@ public class Neuron  {
     
     public void setWeights(List<Double> inweights){
         //include bias weight
+        inputWeights.clear();
         for (int i=0; i < inweights.size() ; i++){
             inputWeights.add(inweights.get(i));
         }  
@@ -63,6 +65,7 @@ public class Neuron  {
         
      public void setUpdatedWeights(List<Double> inweights){
         //include bias weight
+        updatedWeights.clear();
         for (int i=0; i < inweights.size() ; i++){
             updatedWeights.add(inweights.get(i));
         }  

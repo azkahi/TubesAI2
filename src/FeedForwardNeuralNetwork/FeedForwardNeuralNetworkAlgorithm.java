@@ -28,24 +28,26 @@ public class FeedForwardNeuralNetworkAlgorithm {
     protected Instances instances;
     protected Neuron[][] neurons;
     protected int hidden_layers;
+    private final RandomWrapper rnd = new RandomWrapper();
     
 
     public void buildModel(int n_hidden_layer, int neuron_hidden_layer){
         hidden_layers = n_hidden_layer;
         //Ini weight, belum sesuai input
-        List<Double> arr = new ArrayList<Double>();
+        List<Double> arr = new ArrayList<>();
         
         
         //count total number of neurons
         int num_neurons = 0;
-        if (n_hidden_layer == 0){
-           num_neurons = (instances.numAttributes()-1)+ instances.numClasses(); 
-        }
-        else if (n_hidden_layer == 1){
-            num_neurons = (instances.numAttributes()-1)+ instances.numClasses() + neuron_hidden_layer;            
-        }
-        else{
-           throw new RuntimeException("Illegal n_hidden_layer");
+        switch (n_hidden_layer) {
+            case 0:
+                num_neurons = (instances.numAttributes()-1)+ instances.numClasses();
+                break;
+            case 1:
+                num_neurons = (instances.numAttributes()-1)+ instances.numClasses() + neuron_hidden_layer;
+                break;
+            default:
+                throw new RuntimeException("Illegal n_hidden_layer");
         }
         //Build array container
         neurons = new Neuron[n_hidden_layer+2][];
@@ -61,29 +63,35 @@ public class FeedForwardNeuralNetworkAlgorithm {
             for (int j=0; j< neuron_hidden_layer; j++){
                 neurons[1][j] = new Neuron();
                 for (int i=0; i<neurons[0].length; i++){
-                    arr.add(new Double(1));
+                    double temp = rnd.getRand().nextDouble();
+                    arr.add(temp);
                 }
                 neurons[1][j].setWeights(arr);
+                arr.clear();
             }
             //Output Layer
             neurons[2] = new Neuron[instances.numClasses()];
             for (int j=0; j< instances.numClasses(); j++){
                 neurons[2][j] = new Neuron();
                 for (int i=0; i<neurons[1].length; i++){
-                    arr.add(new Double(1));
+                    double temp = rnd.getRand().nextDouble();
+                    arr.add(temp);
                 }
                 neurons[2][j].setWeights(arr);
+                arr.clear();
             }
         }
-        else
+        else //Hidden layer = 0
         {
             neurons[1] = new Neuron[instances.numClasses()];
             for (int j=0; j< instances.numClasses(); j++){
                 neurons[1][j] = new Neuron();
                 for (int i=0; i<neurons[0].length; i++){
-                    arr.add(new Double(1));
+                    double temp = rnd.getRand().nextDouble();
+                    arr.add(temp);
                 }
                 neurons[1][j].setWeights(arr);
+                arr.clear();
             }
         }
         
@@ -100,11 +108,10 @@ public class FeedForwardNeuralNetworkAlgorithm {
         }
     }
     
-    public FeedForwardNeuralNetworkAlgorithm(Instances i)
-	{
+    public FeedForwardNeuralNetworkAlgorithm(Instances i){
 		instances = i;
                 hidden_layers = -1;
-	}
+    }
     
     public void setInputLayer(double[] inputs ){
         //Asumsi sudah sama panjangnya
@@ -167,6 +174,21 @@ public class FeedForwardNeuralNetworkAlgorithm {
             //Langsung hitung output
             for (int k = 0 ; k<instance.numClasses() ; k++){
                 neurons[1][k].setValue(neurons[1][k].activate(instance));
+            }
+            Neuron max = neurons[1][0]; //Initialize
+            //Cari nilai maksimal, karena kelas hanya bisa satu, sehingga kelas lain 
+            //nilainya 0, sementara kelas maksimal diberi nilai 1
+            for (int k = 1; k < instance.numClasses(); k++){
+                if (max.getValue() < neurons[1][k].getValue()){
+                    max = neurons[1][k];
+                }
+            }
+            for (int k = 0; k < instance.numClasses(); k++){
+                if (!neurons[1][k].equals(max)){
+                    neurons[1][k].setValue(0);
+                } else {
+                    neurons[1][k].setValue(1);
+                }
                 result[k] = neurons[1][k].getValue();
             }
         }
@@ -186,6 +208,22 @@ public class FeedForwardNeuralNetworkAlgorithm {
                 
                 neurons[2][k].setValue(neurons[2][k].activate(inp));
                 System.out.println("value 2 "+k+" : "+neurons[2][k].getValue());
+            }
+            
+            Neuron max = neurons[2][0]; //Initialize
+            //Cari nilai maksimal, karena kelas hanya bisa satu, sehingga kelas lain 
+            //nilainya 0, sementara kelas maksimal diberi nilai 1
+            for (int k = 1; k < instance.numClasses(); k++){
+                if (max.getValue() < neurons[1][k].getValue()){
+                    max = neurons[2][k];
+                }
+            }
+            for (int k = 0; k < instance.numClasses(); k++){
+                if (!neurons[2][k].equals(max)){
+                    neurons[2][k].setValue(0);
+                } else {
+                    neurons[2][k].setValue(1);
+                }
                 result[k] = neurons[2][k].getValue();
             }
         }
