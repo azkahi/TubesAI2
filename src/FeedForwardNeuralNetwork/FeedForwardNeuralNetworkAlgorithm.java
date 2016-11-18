@@ -27,7 +27,9 @@ public class FeedForwardNeuralNetworkAlgorithm {
     
     protected Instances instances;
     protected Neuron[][] neurons;
+    protected Instance curr_instance = instances.get(0);
     protected int hidden_layers;
+    protected double learning_rate = 0.5;
     private final RandomWrapper rnd = new RandomWrapper();
     
 
@@ -123,10 +125,18 @@ public class FeedForwardNeuralNetworkAlgorithm {
     public void updateModel(){
         double [] err = countOutput(instances.get(0));
         if (hidden_layers == 0){
+            double[] error = countOutputError(curr_instance);
             for (int i=0 ; i<neurons[1].length; i++){
-                List<Double> weights = neurons[1][i].getWeights();
-                double val = weights.get(i).doubleValue() + 
-                weights.set(i, MIN);
+                List<Double> current_weight = 
+                        new ArrayList<>(neurons[0][i].getWeights());
+                for (int j = 0; j < current_weight.size(); j++){
+                    // learning rate * neuron input * error dari node yang dituju
+                    double diff = learning_rate * neurons[0][i].getValue() 
+                            * error[j];
+                    double val = current_weight.get(j).doubleValue() + diff;
+                    // update
+                    current_weight.set(j, val);
+                }
             }
         }
         else if (hidden_layers == 1)
