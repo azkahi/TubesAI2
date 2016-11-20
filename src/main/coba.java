@@ -18,7 +18,7 @@ import weka.core.Instances;
 public class coba {
     public static void main(String[] args) throws Exception {
         BufferedReader breader = null;
-        breader = new BufferedReader(new FileReader("src\\main\\Team.arff"));
+        breader = new BufferedReader(new FileReader("src/main/Team.arff"));
         Instances inputTrain = new Instances (breader);
         inputTrain.setClassIndex(inputTrain.numAttributes() -1);
         breader.close();

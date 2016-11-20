@@ -18,7 +18,8 @@ import weka.core.Instances;
  */
 public class FeedForwardNeuralNetwork extends AbstractClassifier
 {
-
+    private FeedForwardNeuralNetworkAlgorithm FFNN;
+    
     @Override
     public void buildClassifier(Instances instances) throws Exception {
         // can classifier handle the data?
@@ -34,7 +35,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier
     
     public void trainModel(Instances instances, int hidden_layer, int hidden_neurons){
         //Initialize
-        FeedForwardNeuralNetworkAlgorithm FFNN = new FeedForwardNeuralNetworkAlgorithm(instances);
+        FFNN = new FeedForwardNeuralNetworkAlgorithm(instances);
         FFNN.buildModel(hidden_layer, hidden_neurons);
         
         FFNN.printModel();
@@ -46,7 +47,9 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier
         int correct = 0;
         int incorrect =0;
         int j = 1;
-        while (FFNN.getSumError() != 0 && j < 100 /*&& (FFNN.getClassOutputValues()!= 0 || FFNN.getClassOutputValues()!= -1)*/){
+        //j itu buat ngatur banyaknya iterasi training
+        //makin banyak makin lama tapi makin akurat
+        while (FFNN.getSumError() != 0 && j < 1000){
             System.out.println("\n\n\nIterasi ke - "+j);
             for (int i = 0; i<instances.size(); i++){
                 error = 0;
@@ -67,6 +70,8 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier
             }
             j++;
         }
+        
+        
         System.out.println("Correct : "+correct);
         System.out.println("Incorrect : "+incorrect);
         
@@ -74,6 +79,38 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier
         
         
     }
+    
+    //Ini buat nampilin output array
+    @Override
+    public double[] distributionForInstance(Instance instance) throws Exception {
+        FFNN.setInputLayer(instance.toDoubleArray());
+        FFNN.determineOutput(instance);
+        FFNN.updateModel(instance);
+        double[] result = new double[FFNN.getNeurons().length];
+        for (int i = 0 ; i < result.length ; i++){
+            result[i] = (FFNN.getNeurons())[FFNN.getNeurons().length-1][i].getOutputValue();
+        }
+        
+        return result;
+        
+                
+    }
+    
+    @Override
+    public double classifyInstance(Instance instance) throws Exception {
+         double[] array = distributionForInstance(instance);
+         double max = array[0];
+         int idx = 0;
+         for (int i = 1 ; i < array.length ; i++){
+             if (array[i] > max){
+                 max = array[i];
+                 idx = i;
+             }
+         }
+         
+         return array[idx];
+    }
+    
     
     //INI GUA MASIH TEUING, TOLONG DIKAJI WKWK
     @Override
@@ -95,5 +132,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier
 
         return result;
     }
+    
+    
     
 }
