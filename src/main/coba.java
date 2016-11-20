@@ -18,7 +18,7 @@ import weka.core.Instances;
 public class coba {
     public static void main(String[] args) throws Exception {
         BufferedReader breader = null;
-        breader = new BufferedReader(new FileReader("C:\\Users\\Frys\\Desktop\\Java\\AI\\Weka\\TubesAI2\\src\\main\\iris.arff"));
+        breader = new BufferedReader(new FileReader("src\\main\\iris.arff"));
         Instances inputTrain = new Instances (breader);
         inputTrain.setClassIndex(inputTrain.numAttributes() -1);
         breader.close();
@@ -27,21 +27,54 @@ public class coba {
         double[] arr = inputTrain.get(0).toDoubleArray();
         FFNN.setInputLayer(arr);
         FFNN.printModel();
+        
+        System.out.println((FFNN.getNeurons())[1][0].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[1][1].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[1][2].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[1][3].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[1][4].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[2][0].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[2][1].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[2][2].getWeights().toString());
+        
         double[] arro = {1,1,1,1,1};
-        double res[] = FFNN.countOutput(inputTrain.get(0));
-        System.out.println(res[0]);
-        System.out.println(res[1]);
-        System.out.println(res[2]);
+        FFNN.determineOutput(inputTrain.get(0));
+        System.out.println(FFNN.getClassOutputValues());
         FFNN.printModel();
+        
+        System.out.println((FFNN.getNeurons())[1][0].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[1][1].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[1][2].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[1][3].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[1][4].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[2][0].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[2][1].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[2][2].getWeights().toString());
+        
         double err[] = FFNN.countOutputError(inputTrain.get(0));
+        System.out.println(inputTrain.get(0).classValue());
+        System.out.println("errour out :");
         System.out.println(err[0]);
         System.out.println(err[1]);
         System.out.println(err[2]);
         
+        FFNN.updateModel();
+        FFNN.printModel();
+        System.out.println((FFNN.getNeurons())[1][0].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[1][1].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[1][2].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[1][3].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[1][4].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[2][0].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[2][1].getWeights().toString());
+        System.out.println((FFNN.getNeurons())[2][2].getWeights().toString());
+        
+        /*
         err = FFNN.countHiddenError(inputTrain.get(0));
+        System.out.println("errour hidden :");
         System.out.println(err[0]);
         System.out.println(err[1]);
-        System.out.println(err[2]);
+        System.out.println(err[2]);*/
     }
     
 }

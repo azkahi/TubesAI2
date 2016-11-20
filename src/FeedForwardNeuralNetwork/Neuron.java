@@ -29,6 +29,7 @@ public class Neuron  {
     //value
     protected double value;
     
+    
     // index in the weight vector of the bias weight (always at the end of the array)
     protected int biasIndex;
     

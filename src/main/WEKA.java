@@ -42,7 +42,7 @@ public class WEKA {
         do {
             //Read iris.arff
             BufferedReader breader = null;
-            breader = new BufferedReader(new FileReader("src\\weka\\iris.arff"));
+            breader = new BufferedReader(new FileReader("src\\main\\iris.arff"));
             Instances inputTrain = new Instances (breader);
             inputTrain.setClassIndex(inputTrain.numAttributes() -1);
             breader.close();
