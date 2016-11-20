@@ -26,8 +26,11 @@ public class Neuron  {
     // last change in each weight
     protected List<Double> updatedWeights;
     
-    //value
+    //Real value (pecahan)
     protected double value;
+    
+    //Output Value (0,1)
+    protected double output_value;
     
     
     // index in the weight vector of the bias weight (always at the end of the array)
@@ -39,6 +42,13 @@ public class Neuron  {
         updatedWeights = new ArrayList<Double>();
         value = 0;
         
+    }
+    public double getOutputValue(){
+        return output_value;
+    }
+    
+    public void setOutputValue(double oval){
+        output_value = oval;
     }
     
     public double getValue(){

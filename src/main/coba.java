@@ -23,62 +23,40 @@ public class coba {
         inputTrain.setClassIndex(inputTrain.numAttributes() -1);
         breader.close();
         FeedForwardNeuralNetworkAlgorithm FFNN = new FeedForwardNeuralNetworkAlgorithm(inputTrain);
-        FFNN.buildModel(1, 5);
-        double[] arr = inputTrain.get(0).toDoubleArray();
+        FFNN.buildModel(1,5);
+        
+        double[] arr = inputTrain.get(60).toDoubleArray();
         FFNN.setInputLayer(arr);
-        FFNN.printModel();
-        
-        /*
-        System.out.println((FFNN.getNeurons())[1][0].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[1][1].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[1][2].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[1][3].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[1][4].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[2][0].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[2][1].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[2][2].getWeights().toString());
-        */
-        double[] arro = {1,1,1,1,1};
-        FFNN.determineOutput(inputTrain.get(0));
+        FFNN.determineOutput(inputTrain.get(60));
         System.out.println(FFNN.getClassOutputValues());
-        FFNN.printModel();
-        FFNN.printAllWeights();
-        /*
-        System.out.println((FFNN.getNeurons())[1][0].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[1][1].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[1][2].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[1][3].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[1][4].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[2][0].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[2][1].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[2][2].getWeights().toString());
-        */
-        double err[] = FFNN.countOutputError(inputTrain.get(0));
-        System.out.println(inputTrain.get(0).classValue());
-        System.out.println("errour out :");
-        System.out.println(err[0]);
-        System.out.println(err[1]);
-        System.out.println(err[2]);
-        
         FFNN.updateModel();
         FFNN.printModel();
         FFNN.printAllWeights();
-        /*
-        System.out.println((FFNN.getNeurons())[1][0].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[1][1].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[1][2].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[1][3].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[1][4].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[2][0].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[2][1].getWeights().toString());
-        System.out.println((FFNN.getNeurons())[2][2].getWeights().toString());
-        */
-        /*
-        err = FFNN.countHiddenError(inputTrain.get(0));
-        System.out.println("errour hidden :");
-        System.out.println(err[0]);
-        System.out.println(err[1]);
-        System.out.println(err[2]);*/
+        System.out.println("Class : "+FFNN.getClassOutputValues());
+        
+        
+        System.out.println("\nupdate again!!!!\n");
+        FFNN.clearModel();
+        arr = null;
+        arr = inputTrain.get(61).toDoubleArray();
+        FFNN.setInputLayer(arr);
+        FFNN.determineOutput(inputTrain.get(61));
+        FFNN.updateModel();
+        FFNN.printModel();
+        FFNN.printAllWeights();
+        System.out.println("Class : "+FFNN.getClassOutputValues());
+        
+        System.out.println("\nupdate again!!!!\n");
+        FFNN.clearModel();
+        arr = null;
+        arr = inputTrain.get(132).toDoubleArray();
+        FFNN.setInputLayer(arr);
+        FFNN.determineOutput(inputTrain.get(132));
+        FFNN.updateModel();
+        FFNN.printModel();
+        FFNN.printAllWeights();
+        System.out.println("Class : "+FFNN.getClassOutputValues());
+        
     }
     
 }

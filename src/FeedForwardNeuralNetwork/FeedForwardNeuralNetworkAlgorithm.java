@@ -28,6 +28,7 @@ public class FeedForwardNeuralNetworkAlgorithm {
     protected Instances instances;
     protected Neuron[][] neurons;
     protected Instance curr_instance;
+    protected double sumError;
     protected int hidden_layers;
     protected double learning_rate = 0.5;
     private final RandomWrapper rnd = new RandomWrapper();
@@ -100,6 +101,15 @@ public class FeedForwardNeuralNetworkAlgorithm {
         }
         
         
+        
+    }
+    
+    public void clearModel(){
+        for (int i=0 ; i<neurons.length; i++){
+            for(int j=0; j<neurons[i].length; j++){
+                neurons[i][j].setValue(0);
+            }
+        }
     }
     
     public void printModel(){
@@ -107,15 +117,19 @@ public class FeedForwardNeuralNetworkAlgorithm {
             System.out.print("Layer "+i+" : ");
             for (int j =0 ; j < neurons[i].length ; j++){
                 System.out.print(neurons[i][j].getValue()+" ");
+                if (i==neurons.length-1)
+                    System.out.println("FinalOut : "+neurons[neurons.length-1][j].getOutputValue());
             }
             System.out.println("");
         }
+       
     }
     
     public FeedForwardNeuralNetworkAlgorithm(Instances i){
 		instances = i;
                 curr_instance = instances.get(0);
                 hidden_layers = -1;
+                sumError = 1;
     }
     
     public void setInputLayer(double[] inputs ){
@@ -126,13 +140,14 @@ public class FeedForwardNeuralNetworkAlgorithm {
     } 
     
     public void updateModel(){
+        sumError = countThresholdError(curr_instance);
         if (hidden_layers == 0){
             double[] error = countOutputError(curr_instance);
             for (int i=0 ; i<neurons[1].length; i++){
                 List<Double> current_weights = new ArrayList<>(neurons[1][i].getWeights());
                 for (int j=0; j<current_weights.size() ; j++){
-                    double new_weight = current_weights.get(j).doubleValue() + learning_rate * error[i] * neurons[0][j].getValue();
-                    current_weights.set(j, new Double(new_weight));  
+                    double new_weight = current_weights.get(j) + learning_rate * error[i] * neurons[0][j].getValue();
+                    current_weights.set(j, new_weight);  
                 }
                 neurons[1][i].setWeights(current_weights);
             }
@@ -164,6 +179,26 @@ public class FeedForwardNeuralNetworkAlgorithm {
         }
     }
     
+    public double countThresholdError(Instance instance){
+        int classnum = neurons[neurons.length-1].length;
+        double result = 0;
+        for (int i=0; i<classnum; i++){
+            double expectedValue;
+            if (i == instance.classValue()) 
+            {
+                expectedValue = 1.0;
+            }
+            else
+            {
+                expectedValue = 0.0;
+            }
+            result += Math.pow(expectedValue-neurons[neurons.length-1][i].getValue(), 2) / 2;
+        }
+        return result;
+        
+    }
+    
+    
     public double[] countOutputError(Instance instance){
         //Only invoke this after call countOutput method
         int classnum = neurons[neurons.length-1].length;
@@ -173,16 +208,14 @@ public class FeedForwardNeuralNetworkAlgorithm {
             if (i == instance.classValue()) 
             {
                 expectedValue = 1.0;
-                System.out.println(i+" yes");
             }
             else
             {
                 expectedValue = 0.0;
-                System.out.println(i+" no");
             }
             System.out.println("expectedValue = "+expectedValue);
             System.out.println("outputValue = "+neurons[neurons.length-1][i].getValue());
-            result[i] = /*outputValue * (1-outputValue) * <-karena udah dibulatkan, gaperlu*/(expectedValue - neurons[neurons.length-1][i].getValue());
+            result[i] = neurons[neurons.length-1][i].getValue() * (1-neurons[neurons.length-1][i].getValue()) * (expectedValue - neurons[neurons.length-1][i].getOutputValue());
         }
         return result;
     }
@@ -196,14 +229,27 @@ public class FeedForwardNeuralNetworkAlgorithm {
         int classnum = neurons[neurons.length-1].length;
         double sum = 0;
         double[] error = countOutputError(instance);
-        for (int i=0; i<classnum; i++){
-            sum += error[i] * neurons[1][i].getValue();
+        for (int k=0; k<hidnum; k++){
+            for (int i=0; i<classnum; i++){
+                sum += error[i]*neurons[2][i].getWeights().get(k);
+            }
+            double out = neurons[1][k].getValue();
+            result[k] = out * (1-out) * (sum);
         }
         
-        for (int i=0; i<hidnum; i++){
-            double out = neurons[1][i].getValue();
-            result[i] = out * (1-out) * (sum);
-        }
+        /*
+        for (int i=0; i<classnum; i++){
+            List<Double> weights = neurons[2][i].getWeights();
+            for(int j=0; j<weights.size() ; j++){
+                sum += error[i] * weights.get(j);
+            }
+            for (int k=0; k<hidnum; k++){
+                double out = neurons[1][k].getValue();
+                result[k] = out * (1-out) * (sum);
+            }
+        }*/
+        
+        
         return result;
     }
     
@@ -212,6 +258,7 @@ public class FeedForwardNeuralNetworkAlgorithm {
     }
     
     public double countOutput(Instance instance){
+        System.out.println("Count output invoked");
         setInputLayer(instance.toDoubleArray());
         
         double[] result = new double[instance.numClasses()];
@@ -220,12 +267,10 @@ public class FeedForwardNeuralNetworkAlgorithm {
             //Masukkan input ke input layer
             for (int i=0; i<instance.numAttributes()-1;i++){
                 neurons[0][i].setValue(instance.value(i));
-                System.out.println("0 "+i+" :"+neurons[0][i].getValue());
             }
             //Langsung hitung output
             for (int k = 0 ; k<instance.numClasses() ; k++){
                 neurons[1][k].setValue(neurons[1][k].activate(instance));
-                System.out.println("1 "+k+" :"+neurons[1][k].getValue());
                 
             }
             
@@ -239,9 +284,9 @@ public class FeedForwardNeuralNetworkAlgorithm {
             }
             for (int k = 0; k < instance.numClasses(); k++){
                 if (!neurons[1][k].equals(max)){
-                    neurons[1][k].setValue(0);
+                    neurons[1][k].setOutputValue(0);
                 } else {
-                    neurons[1][k].setValue(1);
+                    neurons[1][k].setOutputValue(1);
                 }
                 
                 System.out.println("value 1 "+k+" : "+neurons[1][k].getValue());
@@ -266,21 +311,22 @@ public class FeedForwardNeuralNetworkAlgorithm {
                 System.out.println("value 2 "+k+" : "+neurons[2][k].getValue());
             }
             
-            Neuron max = neurons[2][0]; //Initialize
+            
+            double max = neurons[neurons.length-1][0].getValue(); //Initialize
             //Cari nilai maksimal, karena kelas hanya bisa satu, sehingga kelas lain 
             //nilainya 0, sementara kelas maksimal diberi nilai 1
             for (int k = 1; k < instance.numClasses(); k++){
-                if (max.getValue() < neurons[1][k].getValue()){
-                    max = neurons[2][k];
+                if (max < neurons[neurons.length-1][k].getValue()){
+                    max = neurons[neurons.length-1][k].getValue();
                 }
             }
             for (int k = 0; k < instance.numClasses(); k++){
-                if (!neurons[2][k].equals(max)){
-                    neurons[2][k].setValue(0);
+                if (max != neurons[neurons.length-1][k].getValue()){
+                    neurons[neurons.length-1][k].setOutputValue(0);
                 } else {
-                    neurons[2][k].setValue(1);
+                    neurons[neurons.length-1][k].setOutputValue(1);
                 }
-                result[k] = neurons[2][k].getValue();
+                result[k] = neurons[neurons.length-1][k].getOutputValue();
             }
         }
         else{
@@ -290,7 +336,7 @@ public class FeedForwardNeuralNetworkAlgorithm {
         //Deciding class
         //If final_result = array result element which contains 1
         for (int i = 0; i<instance.numClasses(); i++){
-            if (result[i] == 1){
+            if (result[i] == 1.0){
                 finale_result = i;
                 break;
             }
@@ -322,6 +368,10 @@ public class FeedForwardNeuralNetworkAlgorithm {
 
     public Neuron[][] getNeurons() {
         return neurons;
+    }
+    
+    public double getSumError(){
+        return sumError;
     }
 
 }
