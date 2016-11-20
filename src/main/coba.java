@@ -28,6 +28,7 @@ public class coba {
         FFNN.setInputLayer(arr);
         FFNN.printModel();
         
+        /*
         System.out.println((FFNN.getNeurons())[1][0].getWeights().toString());
         System.out.println((FFNN.getNeurons())[1][1].getWeights().toString());
         System.out.println((FFNN.getNeurons())[1][2].getWeights().toString());
@@ -36,12 +37,13 @@ public class coba {
         System.out.println((FFNN.getNeurons())[2][0].getWeights().toString());
         System.out.println((FFNN.getNeurons())[2][1].getWeights().toString());
         System.out.println((FFNN.getNeurons())[2][2].getWeights().toString());
-        
+        */
         double[] arro = {1,1,1,1,1};
         FFNN.determineOutput(inputTrain.get(0));
         System.out.println(FFNN.getClassOutputValues());
         FFNN.printModel();
-        
+        FFNN.printAllWeights();
+        /*
         System.out.println((FFNN.getNeurons())[1][0].getWeights().toString());
         System.out.println((FFNN.getNeurons())[1][1].getWeights().toString());
         System.out.println((FFNN.getNeurons())[1][2].getWeights().toString());
@@ -50,7 +52,7 @@ public class coba {
         System.out.println((FFNN.getNeurons())[2][0].getWeights().toString());
         System.out.println((FFNN.getNeurons())[2][1].getWeights().toString());
         System.out.println((FFNN.getNeurons())[2][2].getWeights().toString());
-        
+        */
         double err[] = FFNN.countOutputError(inputTrain.get(0));
         System.out.println(inputTrain.get(0).classValue());
         System.out.println("errour out :");
@@ -60,6 +62,8 @@ public class coba {
         
         FFNN.updateModel();
         FFNN.printModel();
+        FFNN.printAllWeights();
+        /*
         System.out.println((FFNN.getNeurons())[1][0].getWeights().toString());
         System.out.println((FFNN.getNeurons())[1][1].getWeights().toString());
         System.out.println((FFNN.getNeurons())[1][2].getWeights().toString());
@@ -68,7 +72,7 @@ public class coba {
         System.out.println((FFNN.getNeurons())[2][0].getWeights().toString());
         System.out.println((FFNN.getNeurons())[2][1].getWeights().toString());
         System.out.println((FFNN.getNeurons())[2][2].getWeights().toString());
-        
+        */
         /*
         err = FFNN.countHiddenError(inputTrain.get(0));
         System.out.println("errour hidden :");

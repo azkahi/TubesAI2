@@ -298,7 +298,14 @@ public class FeedForwardNeuralNetworkAlgorithm {
         
         return finale_result;
     }
-
+    
+    public void printAllWeights(){
+        for (int i=1 ; i<neurons.length; i++){
+            for(int j=0; j<neurons[i].length; j++){ //Banyak neuron pada layer sebelumnya
+                System.out.println("Weight from layer "+(i-1)+" to neuron "+i+" "+j+"  :"+neurons[i][j].getWeights().toString());
+            }
+        }
+    }
 
     private int getNumOutputNeurons() {
         if(neurons==null)
