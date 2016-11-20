@@ -29,7 +29,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier
         instances = new Instances(instances);
         instances.deleteWithMissingClass();
         
-        trainModel(instances,1,5);
+        trainModel(instances,1,15);
     }
     
     
@@ -49,7 +49,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier
         int j = 1;
         //j itu buat ngatur banyaknya iterasi training
         //makin banyak makin lama tapi makin akurat
-        while (FFNN.getSumError() != 0 && j < 1000){
+        while (FFNN.getSumError() != 0 && j <= 100000){
             System.out.println("\n\n\nIterasi ke - "+j);
             for (int i = 0; i<instances.size(); i++){
                 error = 0;
@@ -58,22 +58,23 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier
                 FFNN.setInputLayer(input);
                 FFNN.determineOutput(instances.get(i));
                 FFNN.updateModel(instances.get(i));
-                System.out.println("\nIterasi ke - "+j+" DATA KE "+(i+1)+"\n");
-                FFNN.printModel();
-                FFNN.printAllWeights();
-                System.out.println("Class : "+FFNN.getClassOutputValues());
-                System.out.println("Error : "+FFNN.getSumError());
-                if (FFNN.getClassOutputValues() == instances.get(i).classValue())
-                    correct++;
-                else
-                    incorrect++;
+                //System.out.println("\nIterasi ke - "+j+" DATA KE "+(i+1)+"\n");
+                //FFNN.printModel();
+                //FFNN.printAllWeights();
+                //System.out.println("Class : "+FFNN.getClassOutputValues());
+                //System.out.println("Error : "+FFNN.getSumError());
+                //if (FFNN.getClassOutputValues() == instances.get(i).classValue())
+                //    correct++;
+                //else
+                //    incorrect++;
             }
             j++;
         }
         
-        
-        System.out.println("Correct : "+correct);
-        System.out.println("Incorrect : "+incorrect);
+        FFNN.printModel();
+        FFNN.printAllWeights();
+       // System.out.println("Correct : "+correct);
+       // System.out.println("Incorrect : "+incorrect);
         
         
         
@@ -86,7 +87,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier
         FFNN.setInputLayer(instance.toDoubleArray());
         FFNN.determineOutput(instance);
         FFNN.updateModel(instance);
-        double[] result = new double[FFNN.getNeurons().length];
+        double[] result = new double[(FFNN.getNeurons())[FFNN.getNeurons().length-1].length];
         for (int i = 0 ; i < result.length ; i++){
             result[i] = (FFNN.getNeurons())[FFNN.getNeurons().length-1][i].getOutputValue();
         }
@@ -108,7 +109,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier
              }
          }
          
-         return array[idx];
+         return idx;
     }
     
     

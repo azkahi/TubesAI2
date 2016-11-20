@@ -14,6 +14,8 @@ import java.util.Scanner;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
+import weka.filters.Filter;
+import weka.filters.supervised.attribute.Discretize;
 
 /**
  *
@@ -40,9 +42,16 @@ public class mFFNN {
         breader.close();
         System.out.println("mFFNN!!!\n\n");
         FeedForwardNeuralNetwork FFNN = new FeedForwardNeuralNetwork();
+        
+        //Entah kenapa Team.arff kalo discretize jd bagus, sedangkan iris.arff jadi jelek
+       // Discretize filter = new Discretize();
+       // filter.setInputFormat(inputTrain);
+       // Instances outputTrain = Filter.useFilter(inputTrain,filter);
+        
         Evaluation eval = new Evaluation(inputTrain);
         //FFNN.trainModel(inputTrain, 1, 5);
         FFNN.buildClassifier(inputTrain);
+       
         eval.evaluateModel(FFNN,inputTrain);
         
         //OUTPUT

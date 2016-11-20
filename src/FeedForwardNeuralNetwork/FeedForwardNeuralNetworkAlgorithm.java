@@ -211,8 +211,8 @@ public class FeedForwardNeuralNetworkAlgorithm {
             {
                 expectedValue = 0.0;
             }
-            System.out.println("expectedValue = "+expectedValue);
-            System.out.println("outputValue = "+neurons[neurons.length-1][i].getValue());
+          //  System.out.println("expectedValue = "+expectedValue);
+          //  System.out.println("outputValue = "+neurons[neurons.length-1][i].getValue());
             result[i] = neurons[neurons.length-1][i].getValue() * (1-neurons[neurons.length-1][i].getValue()) * (expectedValue - neurons[neurons.length-1][i].getValue());
         }
         return result;
@@ -256,7 +256,7 @@ public class FeedForwardNeuralNetworkAlgorithm {
     }
     
     public double countOutput(Instance instance){
-        System.out.println("Count output invoked");
+       // System.out.println("Count output invoked");
         setInputLayer(instance.toDoubleArray());
         
         double[] result = new double[instance.numClasses()];
@@ -287,7 +287,7 @@ public class FeedForwardNeuralNetworkAlgorithm {
                     neurons[1][k].setOutputValue(1);
                 }
                 
-                System.out.println("value 1 "+k+" : "+neurons[1][k].getValue());
+              //  System.out.println("value 1 "+k+" : "+neurons[1][k].getValue());
                 result[k] = neurons[1][k].getValue();
             }
         }
@@ -295,7 +295,7 @@ public class FeedForwardNeuralNetworkAlgorithm {
             //Hitung hidden layer
             for (int i=0 ; i<neurons[1].length ; i++){
                 neurons[1][i].setValue(neurons[1][i].activate(instance));
-                System.out.println("value 1 "+i+" : "+neurons[1][i].getValue());
+            //    System.out.println("value 1 "+i+" : "+neurons[1][i].getValue());
 
             }
             //Hitung output layer
@@ -306,7 +306,7 @@ public class FeedForwardNeuralNetworkAlgorithm {
                 }
                 
                 neurons[2][k].setValue(neurons[2][k].activate(inp));
-                System.out.println("value 2 "+k+" : "+neurons[2][k].getValue());
+             //   System.out.println("value 2 "+k+" : "+neurons[2][k].getValue());
             }
             
             
