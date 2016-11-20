@@ -27,10 +27,9 @@ public class FeedForwardNeuralNetworkAlgorithm {
     
     protected Instances instances;
     protected Neuron[][] neurons;
-    protected Instance curr_instance;
     protected double sumError;
     protected int hidden_layers;
-    protected double learning_rate = 0.5;
+    protected double learning_rate = 0.3;
     private final RandomWrapper rnd = new RandomWrapper();
     //Class Output
     protected double class_output_value;
@@ -127,7 +126,6 @@ public class FeedForwardNeuralNetworkAlgorithm {
     
     public FeedForwardNeuralNetworkAlgorithm(Instances i){
 		instances = i;
-                curr_instance = instances.get(0);
                 hidden_layers = -1;
                 sumError = 1;
     }
@@ -139,7 +137,7 @@ public class FeedForwardNeuralNetworkAlgorithm {
         }
     } 
     
-    public void updateModel(){
+    public void updateModel(Instance curr_instance){
         sumError = countThresholdError(curr_instance);
         if (hidden_layers == 0){
             double[] error = countOutputError(curr_instance);
@@ -215,7 +213,7 @@ public class FeedForwardNeuralNetworkAlgorithm {
             }
             System.out.println("expectedValue = "+expectedValue);
             System.out.println("outputValue = "+neurons[neurons.length-1][i].getValue());
-            result[i] = neurons[neurons.length-1][i].getValue() * (1-neurons[neurons.length-1][i].getValue()) * (expectedValue - neurons[neurons.length-1][i].getOutputValue());
+            result[i] = neurons[neurons.length-1][i].getValue() * (1-neurons[neurons.length-1][i].getValue()) * (expectedValue - neurons[neurons.length-1][i].getValue());
         }
         return result;
     }
@@ -312,7 +310,13 @@ public class FeedForwardNeuralNetworkAlgorithm {
             }
             
             
-            double max = neurons[neurons.length-1][0].getValue(); //Initialize
+            
+        }
+        else{
+           throw new RuntimeException("Illegal n_hidden_layer");
+        }
+        
+        double max = neurons[neurons.length-1][0].getValue(); //Initialize
             //Cari nilai maksimal, karena kelas hanya bisa satu, sehingga kelas lain 
             //nilainya 0, sementara kelas maksimal diberi nilai 1
             for (int k = 1; k < instance.numClasses(); k++){
@@ -328,11 +332,6 @@ public class FeedForwardNeuralNetworkAlgorithm {
                 }
                 result[k] = neurons[neurons.length-1][k].getOutputValue();
             }
-        }
-        else{
-           throw new RuntimeException("Illegal n_hidden_layer");
-        }
-        
         //Deciding class
         //If final_result = array result element which contains 1
         for (int i = 0; i<instance.numClasses(); i++){

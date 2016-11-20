@@ -18,18 +18,20 @@ import weka.core.Instances;
 public class coba {
     public static void main(String[] args) throws Exception {
         BufferedReader breader = null;
-        breader = new BufferedReader(new FileReader("src\\main\\iris.arff"));
+        breader = new BufferedReader(new FileReader("src\\main\\Team.arff"));
         Instances inputTrain = new Instances (breader);
         inputTrain.setClassIndex(inputTrain.numAttributes() -1);
         breader.close();
         FeedForwardNeuralNetworkAlgorithm FFNN = new FeedForwardNeuralNetworkAlgorithm(inputTrain);
         FFNN.buildModel(1,5);
+        FFNN.printModel();
+        FFNN.printAllWeights();
         
         double[] arr = inputTrain.get(60).toDoubleArray();
         FFNN.setInputLayer(arr);
         FFNN.determineOutput(inputTrain.get(60));
         System.out.println(FFNN.getClassOutputValues());
-        FFNN.updateModel();
+        FFNN.updateModel(inputTrain.get(60));
         FFNN.printModel();
         FFNN.printAllWeights();
         System.out.println("Class : "+FFNN.getClassOutputValues());
@@ -41,7 +43,7 @@ public class coba {
         arr = inputTrain.get(61).toDoubleArray();
         FFNN.setInputLayer(arr);
         FFNN.determineOutput(inputTrain.get(61));
-        FFNN.updateModel();
+        FFNN.updateModel(inputTrain.get(61));
         FFNN.printModel();
         FFNN.printAllWeights();
         System.out.println("Class : "+FFNN.getClassOutputValues());
@@ -49,10 +51,10 @@ public class coba {
         System.out.println("\nupdate again!!!!\n");
         FFNN.clearModel();
         arr = null;
-        arr = inputTrain.get(132).toDoubleArray();
+        arr = inputTrain.get(62).toDoubleArray();
         FFNN.setInputLayer(arr);
-        FFNN.determineOutput(inputTrain.get(132));
-        FFNN.updateModel();
+        FFNN.determineOutput(inputTrain.get(62));
+        FFNN.updateModel(inputTrain.get(62));
         FFNN.printModel();
         FFNN.printAllWeights();
         System.out.println("Class : "+FFNN.getClassOutputValues());

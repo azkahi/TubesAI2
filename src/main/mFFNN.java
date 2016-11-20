@@ -8,6 +8,7 @@ package main;
 import FeedForwardNeuralNetwork.FeedForwardNeuralNetwork;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import weka.classifiers.Evaluation;
 import weka.core.Instances;
 
 /**
@@ -22,7 +23,8 @@ public class mFFNN {
         inputTrain.setClassIndex(inputTrain.numAttributes() -1);
         breader.close();
         System.out.println("mFFNN!!!\n\n");
-        FeedForwardNeuralNetwork MAIN = new FeedForwardNeuralNetwork();
-        MAIN.trainModel(inputTrain, 1, 5);
+        FeedForwardNeuralNetwork FFNN = new FeedForwardNeuralNetwork();
+        Evaluation eval = new Evaluation(inputTrain);
+        //FFNN.trainModel(inputTrain, 1, 5);
     }
 }
