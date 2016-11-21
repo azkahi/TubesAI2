@@ -49,7 +49,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier
         int j = 1;
         //j itu buat ngatur banyaknya iterasi training
         //makin banyak makin lama tapi makin akurat
-        while (FFNN.getSumError() != 0 && j <= 100000){
+        while (FFNN.getSumError() != 0 && j <= 1000000){
             System.out.println("\n\n\nIterasi ke - "+j);
             for (int i = 0; i<instances.size(); i++){
                 error = 0;
