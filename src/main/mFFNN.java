@@ -35,13 +35,12 @@ public class mFFNN {
         breader = new BufferedReader(new FileReader("src\\main\\Team.arff"));
         Instances fileTrain = new Instances (breader);
         fileTrain.setClassIndex(fileTrain.numAttributes() - 1);
-        
+        System.out.println(fileTrain);
         breader.close();
         System.out.println("mFFNN!!!\n\n");
         FeedForwardNeuralNetwork FFNN = new FeedForwardNeuralNetwork();
         
         Evaluation eval = new Evaluation(fileTrain);
-        System.out.println(fileTrain.toString());
         FFNN.buildClassifier(fileTrain);
        
         eval.evaluateModel(FFNN,fileTrain);
@@ -53,7 +52,8 @@ public class mFFNN {
         System.out.println(eval.toMatrixString("===Confusion matrix==="));
         System.out.println(eval.fMeasure(1)+" "+eval.recall(1));
         System.out.println("\nDo you want to save this model(1/0)? ");
-        int c = scan.nextInt();
+        FFNN.distributionForInstance(fileTrain.get(0));
+        /* int c = scan.nextInt();
         if (c == 1 ){
              System.out.print("Please enter your file name (*.model) : ");
              String infile = scan.next();
@@ -61,6 +61,6 @@ public class mFFNN {
         }
         else {
             System.out.print("Model not saved.");
-        }
+        } */
     }
 }

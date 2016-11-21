@@ -25,6 +25,7 @@ public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
      * Random number generator
      */
     
+    protected Instances origin;
     protected Instances instances;
     protected Neuron[][] neurons;
     protected double sumError;
@@ -211,8 +212,6 @@ public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
             {
                 expectedValue = 0.0;
             }
-          //  System.out.println("expectedValue = "+expectedValue);
-          //  System.out.println("outputValue = "+neurons[neurons.length-1][i].getValue());
             result[i] = neurons[neurons.length-1][i].getValue() * (1-neurons[neurons.length-1][i].getValue()) * (expectedValue - neurons[neurons.length-1][i].getValue());
         }
         return result;
@@ -295,7 +294,6 @@ public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
             //Hitung hidden layer
             for (int i=0 ; i<neurons[1].length ; i++){
                 neurons[1][i].setValue(neurons[1][i].activate(instance));
-            //    System.out.println("value 1 "+i+" : "+neurons[1][i].getValue());
 
             }
             //Hitung output layer
@@ -306,7 +304,6 @@ public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
                 }
                 
                 neurons[2][k].setValue(neurons[2][k].activate(inp));
-             //   System.out.println("value 2 "+k+" : "+neurons[2][k].getValue());
             }
             
             
@@ -372,5 +369,16 @@ public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
     public double getSumError(){
         return sumError;
     }
+    
+    public Instances getInstances(){
+        return instances;
+    }
 
+    public void setOrigin(Instances i){
+        origin = i;
+    }
+    
+    public Instances getOrigin(){
+        return origin;
+    }
 }

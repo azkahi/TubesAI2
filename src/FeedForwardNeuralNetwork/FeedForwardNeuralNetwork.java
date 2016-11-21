@@ -11,6 +11,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.unsupervised.attribute.Reorder;
 import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.NominalToBinary;
 import weka.filters.unsupervised.attribute.Normalize;
 
 
@@ -25,6 +26,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
     
     @Override
     public void buildClassifier(Instances instances) throws Exception {
+        Instances origin = new Instances(instances);
         // can classifier handle the data?
         getCapabilities().testWithFail(instances);
         
@@ -59,15 +61,23 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
             instances.setClassIndex(instances.numAttributes() - 1);
         }
         
+        
+        /* NominalToBinary nominalToBinary = new NominalToBinary();
+        nominalToBinary.setInputFormat(instances);
+        instances = Filter.useFilter(instances, nominalToBinary); */
+        
+        // Normalize filter pasti dilakukan
         Normalize normalize = new Normalize();
         normalize.setInputFormat(instances);
         instances = Filter.useFilter(instances, normalize);
+        FFNN = new FeedForwardNeuralNetworkAlgorithm(instances);
+        FFNN.setOrigin(origin);
+        trainModel(instances,1,25);
     }
     
     
     public void trainModel(Instances instances, int hidden_layer, int hidden_neurons){
         //Initialize
-        FFNN = new FeedForwardNeuralNetworkAlgorithm(instances);
         FFNN.buildModel(hidden_layer, hidden_neurons);
         
         FFNN.printModel();
@@ -84,7 +94,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         int j = 1;
         //j itu buat ngatur banyaknya iterasi training
         //makin banyak makin lama tapi makin akurat
-        while (FFNN.getSumError() != 0 && j <= 100){
+        while (FFNN.getSumError() != 0 && j <= 100000){
             System.out.println("\n\n\nIterasi ke - "+j);
             for (int i = 0; i<instances.size(); i++){
                 error = 0;
@@ -106,8 +116,8 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
             j++;
         }
         
-        FFNN.printModel();
-        FFNN.printAllWeights();
+        //FFNN.printModel();
+        //FFNN.printAllWeights();
        // System.out.println("Correct : "+correct);
        // System.out.println("Incorrect : "+incorrect);
         
@@ -119,9 +129,15 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
     //Ini buat nampilin output array
     @Override
     public double[] distributionForInstance(Instance instance) throws Exception {
-        FFNN.setInputLayer(instance.toDoubleArray());
-        FFNN.determineOutput(instance);
-        FFNN.updateModel(instance);
+        Normalize normalize = new Normalize();
+        FFNN.getOrigin().add(instance);
+        normalize.setInputFormat(FFNN.getOrigin());
+        Instance temp = Filter.useFilter(FFNN.getOrigin(), normalize).lastInstance();
+        FFNN.getInstances().remove(FFNN.getOrigin().lastInstance());
+        
+        FFNN.setInputLayer(temp.toDoubleArray());
+        FFNN.determineOutput(temp);
+        FFNN.updateModel(temp);
         double[] result = new double[(FFNN.getNeurons())[FFNN.getNeurons().length-1].length];
         for (int i = 0 ; i < result.length ; i++){
             result[i] = (FFNN.getNeurons())[FFNN.getNeurons().length-1][i].getOutputValue();
@@ -134,17 +150,17 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
     
     @Override
     public double classifyInstance(Instance instance) throws Exception {
-         double[] array = distributionForInstance(instance);
-         double max = array[0];
-         int idx = 0;
-         for (int i = 1 ; i < array.length ; i++){
-             if (array[i] > max){
-                 max = array[i];
-                 idx = i;
-             }
-         }
+        double[] array = distributionForInstance(instance);
+        double max = array[0];
+        int idx = 0;
+        for (int i = 1 ; i < array.length ; i++){
+            if (array[i] > max){
+                max = array[i];
+                idx = i;
+            }
+        } 
          
-         return idx;
+        return idx;
     }
     
     
