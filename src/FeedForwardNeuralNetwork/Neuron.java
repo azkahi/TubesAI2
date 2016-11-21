@@ -13,7 +13,7 @@ import weka.core.Instance;
  *
  * @author user-ari
  */
-public class Neuron  {
+public class Neuron implements java.io.Serializable {
     
     public final static double DEFAULT_BIAS_VALUE = 1.0;
     

@@ -9,6 +9,8 @@ import weka.classifiers.AbstractClassifier;
 import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.filters.unsupervised.attribute.Reorder;
+import weka.filters.Filter;
 
 
 
@@ -16,7 +18,7 @@ import weka.core.Instances;
  *
  * @author user-ari
  */
-public class FeedForwardNeuralNetwork extends AbstractClassifier
+public class FeedForwardNeuralNetwork extends AbstractClassifier implements java.io.Serializable
 {
     private FeedForwardNeuralNetworkAlgorithm FFNN;
     
@@ -28,6 +30,34 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier
         // remove instances with missing class
         instances = new Instances(instances);
         instances.deleteWithMissingClass();
+        
+        int columnIndex = instances.classIndex() + 1;
+        if (instances.classIndex() != instances.numAttributes() -1){
+            String order = "";
+            for (int i = 1; i < instances.numAttributes() + 1; i++) {
+              // skip new class
+              if (i == columnIndex)
+                continue;
+
+              if (!order.equals(""))
+                order += ",";
+              order += Integer.toString(i);
+            }
+            if (!order.equals(""))
+              order += ",";
+            order += Integer.toString(columnIndex);
+
+            // process data
+            Reorder reorder = new Reorder();
+            reorder.setAttributeIndices(order);
+            System.out.println(order);
+            reorder.setInputFormat(instances);
+            instances = Filter.useFilter(instances, reorder);
+
+            // set class index
+            instances.setClassIndex(instances.numAttributes() - 1);
+            System.out.println(instances.toString());
+        }
         
         trainModel(instances,1,15);
     }
@@ -49,7 +79,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier
         int j = 1;
         //j itu buat ngatur banyaknya iterasi training
         //makin banyak makin lama tapi makin akurat
-        while (FFNN.getSumError() != 0 && j <= 100000){
+        while (FFNN.getSumError() != 0 && j <= 10){
             System.out.println("\n\n\nIterasi ke - "+j);
             for (int i = 0; i<instances.size(); i++){
                 error = 0;

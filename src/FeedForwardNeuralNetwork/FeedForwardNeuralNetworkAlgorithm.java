@@ -16,7 +16,7 @@ import weka.core.Utils;
  *
  * @author user-ari
  */
-public class FeedForwardNeuralNetworkAlgorithm {
+public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
     public final static double UPPER_THRESHOLD = +45.0;
     public final static double LOWER_THRESHOLD = -45.0;
     public final static double MAX = +1.0;

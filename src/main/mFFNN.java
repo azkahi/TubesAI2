@@ -25,20 +25,22 @@ public class mFFNN {
     
    void saveModel(Classifier C, String namaFile) throws Exception {
         //SAVE 
-         // serialize model
-                ObjectOutputStream oos = new ObjectOutputStream(
-                                           new FileOutputStream(namaFile));
-                oos.writeObject(C);
-                oos.flush();
-                oos.close();
+        // serialize model
+        weka.core.SerializationHelper.write(namaFile, C);
     }
     
     public static void main(String[] args) throws Exception {
         mFFNN m = new mFFNN();
         BufferedReader breader = null;
-        breader = new BufferedReader(new FileReader("src\\main\\iris.arff"));
-        Instances inputTrain = new Instances (breader);
-        inputTrain.setClassIndex(inputTrain.numAttributes() -1);
+        breader = new BufferedReader(new FileReader("src\\main\\mush.arff"));
+        Instances fileTrain = new Instances (breader);
+        fileTrain.setClassIndex(0);
+        System.out.println(fileTrain.attribute(0));
+        
+        Discretize filter = new Discretize();
+        filter.setInputFormat(fileTrain);
+        Instances inputTrain = Filter.useFilter(fileTrain,filter);
+        
         breader.close();
         System.out.println("mFFNN!!!\n\n");
         FeedForwardNeuralNetwork FFNN = new FeedForwardNeuralNetwork();
