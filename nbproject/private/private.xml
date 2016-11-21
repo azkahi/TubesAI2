@@ -3,18 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/user-ari/Documents/ITB/IF/ai/TubesAI2/src/main/coba.java</file>
             <file>file:/C:/Users/user-ari/Documents/ITB/IF/ai/TubesAI2/src/main/mush.arff</file>
-            <file>jar:file:/C:/Users/user-ari/Documents/ITB/IF/ai/TubesAI2/weka-src.jar!/src/main/java/weka/core/Capabilities.java</file>
-            <file>jar:file:/C:/Users/user-ari/Documents/ITB/IF/ai/TubesAI2/weka-src.jar!/src/main/java/weka/classifiers/bayes/NaiveBayes.java</file>
-            <file>jar:file:/C:/Users/user-ari/Documents/ITB/IF/ai/TubesAI2/weka-src.jar!/src/main/java/weka/classifiers/functions/MultilayerPerceptron.java</file>
-            <file>file:/C:/Users/user-ari/Documents/ITB/IF/ai/TubesAI2/src/FeedForwardNeuralNetwork/Neuron.java</file>
             <file>file:/C:/Users/user-ari/Documents/ITB/IF/ai/TubesAI2/src/main/mFFNN.java</file>
             <file>file:/C:/Users/user-ari/Documents/ITB/IF/ai/TubesAI2/src/FeedForwardNeuralNetwork/FeedForwardNeuralNetwork.java</file>
-            <file>file:/C:/Users/user-ari/Documents/ITB/IF/ai/TubesAI2/src/main/WEKA.java</file>
+            <file>file:/C:/Users/user-ari/Documents/ITB/IF/ai/TubesAI2/src/FeedForwardNeuralNetwork/RandomWrapper.java</file>
             <file>file:/C:/Users/user-ari/Documents/ITB/IF/ai/TubesAI2/src/FeedForwardNeuralNetwork/FeedForwardNeuralNetworkAlgorithm.java</file>
-            <file>file:/C:/Users/user-ari/Documents/ITB/IF/ai/TubesAI2/src/main/iris.arff</file>
-            <file>jar:file:/C:/Users/user-ari/Documents/ITB/IF/ai/TubesAI2/weka-src.jar!/src/main/java/weka/classifiers/evaluation/Evaluation.java</file>
+            <file>file:/C:/Users/user-ari/Documents/ITB/IF/ai/TubesAI2/src/main/Team.arff</file>
         </group>
     </open-files>
 </project-private>
