@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package FeedForwardNeuralNetwork;
 
 import weka.classifiers.AbstractClassifier;
@@ -13,16 +8,32 @@ import weka.filters.unsupervised.attribute.Reorder;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.NominalToBinary;
 import weka.filters.unsupervised.attribute.Normalize;
+import weka.filters.unsupervised.instance.Randomize;
 
-
-
-/**
- *
- * @author user-ari
- */
 public class FeedForwardNeuralNetwork extends AbstractClassifier implements java.io.Serializable
 {
     private FeedForwardNeuralNetworkAlgorithm FFNN;
+    private boolean normalized = false;
+    
+    public FeedForwardNeuralNetworkAlgorithm getAlg(){
+        return FFNN;
+    }
+    
+    public void Normalize() throws Exception{
+        
+    }
+    
+    public void Randomize() throws Exception{
+        Randomize randomize = new Randomize();
+        randomize.setInputFormat(FFNN.getInstances());
+        buildClassifier(Filter.useFilter(FFNN.getInstances(), randomize));
+    }
+    
+    public void NTB() throws Exception{
+        NominalToBinary nominalToBinary = new NominalToBinary();
+        nominalToBinary.setInputFormat(FFNN.getInstances());
+        buildClassifier(Filter.useFilter(FFNN.getInstances(), nominalToBinary));
+    }
     
     @Override
     public void buildClassifier(Instances instances) throws Exception {
@@ -56,21 +67,25 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
             System.out.println(order);
             reorder.setInputFormat(instances);
             instances = Filter.useFilter(instances, reorder);
+            
+            
 
             // set class index
             instances.setClassIndex(instances.numAttributes() - 1);
         }
+        FFNN = new FeedForwardNeuralNetworkAlgorithm(instances);
         
-        
-        /* NominalToBinary nominalToBinary = new NominalToBinary();
-        nominalToBinary.setInputFormat(instances);
-        instances = Filter.useFilter(instances, nominalToBinary); */
-        
-        // Normalize filter pasti dilakukan
+        //NORMALIZE
         Normalize normalize = new Normalize();
         normalize.setInputFormat(instances);
         instances = Filter.useFilter(instances, normalize);
-        FFNN = new FeedForwardNeuralNetworkAlgorithm(instances);
+        normalized = true;
+        
+        //RANDOMIZE
+        Randomize randomize = new Randomize();
+        randomize.setInputFormat(instances);
+        instances = Filter.useFilter(instances, randomize);
+        
         FFNN.setOrigin(origin);
         trainModel(instances,1,25);
     }
@@ -79,61 +94,35 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
     public void trainModel(Instances instances, int hidden_layer, int hidden_neurons){
         //Initialize
         FFNN.buildModel(hidden_layer, hidden_neurons);
-        
-        FFNN.printModel();
-        FFNN.printAllWeights();
-        
-        
-        System.out.println(instances.toString());
-        
         //Start Training
         double[] input = null;
-        double error = 0;
-        int correct = 0;
-        int incorrect = 0;
         int j = 1;
         //j itu buat ngatur banyaknya iterasi training
-        //makin banyak makin lama tapi makin akurat
-        while (FFNN.getSumError() != 0 && j <= 100000){
-            System.out.println("\n\n\nIterasi ke - "+j);
+        int error = 0;
+        while (FFNN.getSumError() > error && j <= 1000000){
             for (int i = 0; i<instances.size(); i++){
-                error = 0;
                 FFNN.clearModel();
                 input = instances.get(i).toDoubleArray();
                 FFNN.setInputLayer(input);
                 FFNN.determineOutput(instances.get(i));
                 FFNN.updateModel(instances.get(i));
-                //System.out.println("\nIterasi ke - "+j+" DATA KE "+(i+1)+"\n");
-                //FFNN.printModel();
-                //FFNN.printAllWeights();
-                //System.out.println("Class : "+FFNN.getClassOutputValues());
-                //System.out.println("Error : "+FFNN.getSumError());
-                //if (FFNN.getClassOutputValues() == instances.get(i).classValue())
-                //    correct++;
-                //else
-                //    incorrect++;
             }
             j++;
+            System.out.println(j);
         }
-        
-        //FFNN.printModel();
-        //FFNN.printAllWeights();
-       // System.out.println("Correct : "+correct);
-       // System.out.println("Incorrect : "+incorrect);
-        
-        
-        
-        
     }
     
     //Ini buat nampilin output array
     @Override
     public double[] distributionForInstance(Instance instance) throws Exception {
+        Instance temp = instance;
         Normalize normalize = new Normalize();
-        FFNN.getOrigin().add(instance);
-        normalize.setInputFormat(FFNN.getOrigin());
-        Instance temp = Filter.useFilter(FFNN.getOrigin(), normalize).lastInstance();
-        FFNN.getInstances().remove(FFNN.getOrigin().lastInstance());
+        if (normalized){
+            FFNN.getOrigin().add(instance);
+            normalize.setInputFormat(FFNN.getOrigin());
+            temp = Filter.useFilter(FFNN.getOrigin(), normalize).lastInstance();
+            FFNN.getInstances().remove(FFNN.getOrigin().lastInstance());
+        }
         
         FFNN.setInputLayer(temp.toDoubleArray());
         FFNN.determineOutput(temp);
@@ -163,8 +152,6 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         return idx;
     }
     
-    
-    //INI GUA MASIH TEUING, TOLONG DIKAJI WKWK
     @Override
     public Capabilities getCapabilities() {
         Capabilities result = super.getCapabilities();
@@ -173,13 +160,11 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         // attributes
         result.enable(Capabilities.Capability.NOMINAL_ATTRIBUTES);
         result.enable(Capabilities.Capability.NUMERIC_ATTRIBUTES);
-        result.enable(Capabilities.Capability.DATE_ATTRIBUTES);
         result.enable(Capabilities.Capability.MISSING_VALUES);
 
         // class
         result.enable(Capabilities.Capability.NOMINAL_CLASS);
         result.enable(Capabilities.Capability.NUMERIC_CLASS);
-        result.enable(Capabilities.Capability.DATE_CLASS);
         result.enable(Capabilities.Capability.MISSING_CLASS_VALUES);
 
         return result;

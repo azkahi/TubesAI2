@@ -12,3 +12,12 @@ hs_err_pid*
 /nbproject/private/
 /dist/
 /build/
+/src/nbbener/weka2/build/
+/src/nbbener/weka2/dist/
+/src/nbbener/weka2/nbproject/private/
+/src/NB/weka2/build/
+/src/NB/weka2/dist/
+/src/NB/weka2/nbproject/private/
+/src/NaiveBayes/weka2/build/
+/src/NaiveBayes/weka2/dist/
+/src/NaiveBayes/weka2/nbproject/private/

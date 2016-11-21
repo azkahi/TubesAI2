@@ -10,10 +10,6 @@ public class RandomWrapper implements Serializable
 	
 	private Random rand;
 	
-	/**
-	 * Constructor
-	 * @param aSeed
-	 */
 	public RandomWrapper(long aSeed)
 	{
 		seed = aSeed;
@@ -24,27 +20,17 @@ public class RandomWrapper implements Serializable
 	{
 		rand = new Random(seed);
 	}
-	
-	/**
-	 * Constructor
-	 *
-	 */
+
 	public RandomWrapper()
 	{
 		this(System.currentTimeMillis());
 	}	
 	
-	/**
-	 * @return
-	 */
 	public Random getRand()
 	{
 		return rand;
 	}
 
-	/**
-	 * @return
-	 */
 	public long getSeed()
 	{
 		return seed;

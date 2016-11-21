@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package FeedForwardNeuralNetwork;
 
 import java.util.ArrayList;
@@ -12,18 +7,11 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Utils;
 
-/**
- *
- * @author user-ari
- */
 public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
     public final static double UPPER_THRESHOLD = +45.0;
     public final static double LOWER_THRESHOLD = -45.0;
     public final static double MAX = +1.0;
     public final static double MIN =  0.0;
-    /**
-     * Random number generator
-     */
     
     protected Instances origin;
     protected Instances instances;
@@ -32,7 +20,8 @@ public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
     protected int hidden_layers;
     protected double learning_rate = 0.3;
     private final RandomWrapper rnd = new RandomWrapper();
-    //Class Output
+    
+//Class Output
     protected double class_output_value;
     
 
@@ -375,7 +364,7 @@ public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
     }
 
     public void setOrigin(Instances i){
-        origin = i;
+        origin = new Instances(i);
     }
     
     public Instances getOrigin(){

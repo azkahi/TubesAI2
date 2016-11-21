@@ -1,8 +1,12 @@
 /*
- * Made by Ari Pratama and Azka Hanif
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
 package main;
 
+import FeedForwardNeuralNetwork.FeedForwardNeuralNetwork;
+import NaiveBayes.NaiveBayes13514004;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -10,68 +14,70 @@ import java.io.ObjectOutputStream;
 import java.util.Random;
 import java.util.Scanner;
 import weka.classifiers.Classifier;
-
-import weka.core.Instances;
 import weka.classifiers.Evaluation;
-import weka.classifiers.bayes.NaiveBayes;
 import weka.core.DenseInstance;
+import weka.core.Instances;
 import weka.filters.Filter;
-import weka.filters.supervised.attribute.*;
+import weka.filters.supervised.attribute.Discretize;
 
-import FeedForwardNeuralNetwork.*;
-
-public class WEKA {
+/**
+ *
+ * @author user-ari
+ */
+public class Main {
     
-    void saveModel(Classifier C, String namaFile) throws Exception {
+   static void saveModel(Classifier C, String namaFile) throws Exception {
         //SAVE 
-         // serialize model
-                ObjectOutputStream oos = new ObjectOutputStream(
-                                           new FileOutputStream(namaFile));
-                oos.writeObject(C);
-                oos.flush();
-                oos.close();
+        // serialize model
+        String dir = "models//" + namaFile + ".model";
+        weka.core.SerializationHelper.write(dir, C);
     }
-
+    
     public static void main(String[] args) throws Exception {
-        // IMPORT file *.arff
-        WEKA w = new WEKA();
-        String[] options = weka.core.Utils.splitOptions("-R 1");;
+        Scanner scan = new Scanner(System.in);
+        BufferedReader breader = null;
         
-        //Pilihan SKEMA
+        //File input
+        System.out.print("Masukkan Nama File Input: ");
+        String filename = scan.next();
+        breader = new BufferedReader(new FileReader("arff//"+ filename +".arff"));
+        Instances fileTrain = new Instances (breader);
+        breader.close();
+        
+        //Index kelas
+        System.out.print("Masukkan index dari atribut yang menjadi kelas "
+                + "(-1 untuk last index): ");
+        int classIndex = scan.nextInt();
+        if (classIndex == -1) classIndex = fileTrain.numAttributes() - 1;
+        fileTrain.setClassIndex(classIndex);
+        
+        //Pilih classifier
+        System.out.print("Pilih classifier yang akan digunakan (0: NB, 1: FFNN): ");
+        int classifierChoice = scan.nextInt();
+        Classifier classifier;
+        if (classifierChoice == 0){
+            classifier = new NaiveBayes13514004();
+        } else {    
+            classifier = new FeedForwardNeuralNetwork();
+        }
+       
+        //Evaluate
+        Evaluation eval = new Evaluation(fileTrain);
         boolean validasi = false;
         do {
-            //Read iris.arff
-            BufferedReader breader = null;
-            breader = new BufferedReader(new FileReader("src\\main\\iris.arff"));
-            Instances inputTrain = new Instances (breader);
-            inputTrain.setClassIndex(inputTrain.numAttributes() -1);
-            breader.close();
-
-            //FILTER
-            Discretize filter = new Discretize();
-            filter.setInputFormat(inputTrain);
-            Instances outputTrain = Filter.useFilter(inputTrain,filter);
-            Evaluation eval = new Evaluation(outputTrain);
-
-            //ALGORITMA YANG DIGUNAKAN
-            NaiveBayes nB = new NaiveBayes();
-            
-            //Menu
-            Scanner scan = new Scanner(System.in);
             System.out.println("\n\n=================\n==== OPTION ====");
             System.out.println("1. Full Training Scheme");
             System.out.println("2. 10 Fold Validation Scheme");
             System.out.println("3. Load");
             System.out.println("4. Create new instance");
             System.out.println("5. Exit");
-            System.out.print("Enter your option (1/2/3/4) : ");
+            System.out.print("Enter your option (1/2/3/4/5): ");
             int pilihan = scan.nextInt();
-
             switch (pilihan) {
                 case 1:
                     {
-                        nB.buildClassifier(outputTrain);
-                        eval.evaluateModel(nB,outputTrain);
+                        classifier.buildClassifier(fileTrain);
+                        eval.evaluateModel(classifier, fileTrain);
                         //OUTPUT
                         System.out.println(eval.toSummaryString("=== Stratified cross-validation ===\n" +"=== Summary ===",true));
                         System.out.println(eval.toClassDetailsString("=== Detailed Accuracy By Class ==="));
@@ -82,7 +88,7 @@ public class WEKA {
                         if (c == 1 ){
                             System.out.print("Please enter your file name (*.model) : ");
                             String infile = scan.next();
-                            w.saveModel(nB,infile);
+                            saveModel(classifier, infile);
                         }
                         else {
                             System.out.print("Model not saved.");
@@ -90,11 +96,11 @@ public class WEKA {
                     }
                 case 2:
                     {
-                        nB.buildClassifier(outputTrain);
-                        eval.crossValidateModel(nB, outputTrain, 10, new Random(1));
+                        classifier.buildClassifier(fileTrain);
+                        eval.crossValidateModel(classifier, fileTrain, 10, new Random(1));
                         
                         //OUTPUT
-                        System.out.println(eval.toSummaryString("=== Stratified cross-validation ===\n" +"=== Summary ===",true));
+                        System.out.println(eval.toSummaryString("=== 10-fold-cross-validation ===\n",true));
                         System.out.println(eval.toClassDetailsString("=== Detailed Accuracy By Class ==="));
                         System.out.println(eval.toMatrixString("===Confusion matrix==="));
                         System.out.println(eval.fMeasure(1)+" "+eval.recall(1));
@@ -103,7 +109,7 @@ public class WEKA {
                         if (c == 1 ){
                             System.out.print("Please enter your file name (*.model) : ");
                             String infile = scan.next();
-                            w.saveModel(nB,infile);
+                            saveModel(classifier, infile);
                         }
                         else {
                             System.out.print("Model not saved.");
@@ -114,8 +120,8 @@ public class WEKA {
                     // deserialize model
                     System.out.print("Please enter the file name : ");
                     String namaFile = scan.next();
-                    Classifier cls = (Classifier) weka.core.SerializationHelper.read(namaFile);
-                    eval.crossValidateModel(cls, outputTrain, 10, new Random(1));
+                    Classifier cls = (Classifier) weka.core.SerializationHelper.read("models//" + namaFile + ".model");
+                    eval.crossValidateModel(classifier, fileTrain, 10, new Random(1));
                     System.out.println(eval.toSummaryString("=== Stratified cross-validation ===\n" +"=== Summary ===",true));
                     System.out.println(eval.toClassDetailsString("=== Detailed Accuracy By Class ==="));
                     System.out.println(eval.toMatrixString("===Confusion matrix==="));
@@ -124,23 +130,22 @@ public class WEKA {
                 case 4:
                     System.out.println();
                     //ADD New Instance
-                    nB.buildClassifier(inputTrain);
                     //Copy attributes from instances
-                    DenseInstance buffer = new DenseInstance(inputTrain.firstInstance());
+                    DenseInstance buffer = new DenseInstance(fileTrain.firstInstance());
                     //Initialization
-                    buffer.setDataset(inputTrain);
-                    buffer.setMissing(inputTrain.classIndex());
+                    buffer.setDataset(fileTrain);
+                    buffer.setMissing(fileTrain.classIndex());
                     //Input
-                    for (int i = 0; i < inputTrain.classIndex(); i++){
+                    for (int i = 0; i < fileTrain.classIndex(); i++){
                         System.out.print("Enter the value for " + buffer.attribute(i).name() + ": ");
                         double val = scan.nextDouble();
                         buffer.setValue(i, val);
                     }
                     //Classify
-                    double res = nB.classifyInstance(buffer);
-                    buffer.setValue(inputTrain.classIndex(), res);
-                    inputTrain.add(buffer);
-                    System.out.println("Class: " + buffer.stringValue(inputTrain.classIndex()));
+                    double res = classifier.classifyInstance(buffer);
+                    buffer.setValue(fileTrain.classIndex(), res);
+                    fileTrain.add(buffer);
+                    System.out.println("Class: " + buffer.stringValue(fileTrain.classIndex()));
                     break;
                 case 5:
                     validasi = true;
@@ -149,7 +154,6 @@ public class WEKA {
                     System.out.println("Wrong input!");
                     break;
             }
-        }
-        while (!validasi);
+        } while (!validasi);
     }
 }
