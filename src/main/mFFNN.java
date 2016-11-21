@@ -32,26 +32,20 @@ public class mFFNN {
     public static void main(String[] args) throws Exception {
         mFFNN m = new mFFNN();
         BufferedReader breader = null;
-        breader = new BufferedReader(new FileReader("src\\main\\mush.arff"));
+        breader = new BufferedReader(new FileReader("src\\main\\Team.arff"));
         Instances fileTrain = new Instances (breader);
-        fileTrain.setClassIndex(0);
-        System.out.println(fileTrain.attribute(0));
-        
-        Discretize filter = new Discretize();
-        filter.setInputFormat(fileTrain);
-        Instances inputTrain = Filter.useFilter(fileTrain,filter);
+        fileTrain.setClassIndex(fileTrain.numAttributes() - 1);
         
         breader.close();
         System.out.println("mFFNN!!!\n\n");
         FeedForwardNeuralNetwork FFNN = new FeedForwardNeuralNetwork();
         
-        //Entah kenapa Team.arff kalo discretize jd bagus, sedangkan iris.arff jadi jelek
-       // Discretize filter = new Discretize();
-       // filter.setInputFormat(inputTrain);
-       // Instances outputTrain = Filter.useFilter(inputTrain,filter);
+        Discretize filter = new Discretize();
+        filter.setInputFormat(fileTrain);
+        Instances inputTrain = Filter.useFilter(fileTrain,filter);
         
         Evaluation eval = new Evaluation(inputTrain);
-        //FFNN.trainModel(inputTrain, 1, 5);
+        System.out.println(fileTrain.toString());
         FFNN.buildClassifier(inputTrain);
        
         eval.evaluateModel(FFNN,inputTrain);

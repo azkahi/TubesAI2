@@ -56,7 +56,6 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
 
             // set class index
             instances.setClassIndex(instances.numAttributes() - 1);
-            System.out.println(instances.toString());
         }
         
         trainModel(instances,1,15);
@@ -71,15 +70,17 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         FFNN.printModel();
         FFNN.printAllWeights();
         
+        
+        System.out.println(instances.toString());
+        
         //Start Training
         double[] input = null;
         double error = 0;
         int correct = 0;
-        int incorrect =0;
+        int incorrect = 0;
         int j = 1;
         //j itu buat ngatur banyaknya iterasi training
         //makin banyak makin lama tapi makin akurat
-        while (FFNN.getSumError() != 0 && j <= 1000000){
             System.out.println("\n\n\nIterasi ke - "+j);
             for (int i = 0; i<instances.size(); i++){
                 error = 0;
