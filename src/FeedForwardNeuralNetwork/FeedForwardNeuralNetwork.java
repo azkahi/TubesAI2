@@ -11,6 +11,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.unsupervised.attribute.Reorder;
 import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Normalize;
 
 
 
@@ -58,7 +59,9 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
             instances.setClassIndex(instances.numAttributes() - 1);
         }
         
-        trainModel(instances,1,15);
+        Normalize normalize = new Normalize();
+        normalize.setInputFormat(instances);
+        instances = Filter.useFilter(instances, normalize);
     }
     
     
@@ -81,6 +84,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         int j = 1;
         //j itu buat ngatur banyaknya iterasi training
         //makin banyak makin lama tapi makin akurat
+        while (FFNN.getSumError() != 0 && j <= 100){
             System.out.println("\n\n\nIterasi ke - "+j);
             for (int i = 0; i<instances.size(); i++){
                 error = 0;

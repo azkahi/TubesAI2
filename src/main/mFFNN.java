@@ -40,15 +40,11 @@ public class mFFNN {
         System.out.println("mFFNN!!!\n\n");
         FeedForwardNeuralNetwork FFNN = new FeedForwardNeuralNetwork();
         
-        Discretize filter = new Discretize();
-        filter.setInputFormat(fileTrain);
-        Instances inputTrain = Filter.useFilter(fileTrain,filter);
-        
-        Evaluation eval = new Evaluation(inputTrain);
+        Evaluation eval = new Evaluation(fileTrain);
         System.out.println(fileTrain.toString());
-        FFNN.buildClassifier(inputTrain);
+        FFNN.buildClassifier(fileTrain);
        
-        eval.evaluateModel(FFNN,inputTrain);
+        eval.evaluateModel(FFNN,fileTrain);
         
         //OUTPUT
         Scanner scan = new Scanner(System.in);
