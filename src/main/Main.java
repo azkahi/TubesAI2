@@ -76,8 +76,20 @@ public class Main {
             switch (pilihan) {
                 case 1:
                     {
-                        classifier.buildClassifier(fileTrain);
-                        eval.evaluateModel(classifier, fileTrain);
+                        if (classifierChoice == 0){
+                            Discretize filter = new Discretize();
+                            Instances filterRes;
+
+                            //Algoritma
+                            filter.setInputFormat(fileTrain);
+                            filterRes = Filter.useFilter(fileTrain, filter);
+                            
+                            classifier.buildClassifier(filterRes);
+                            eval.evaluateModel(classifier, filterRes);
+                        } else {
+                            classifier.buildClassifier(fileTrain);
+                            eval.evaluateModel(classifier, fileTrain);
+                        }
                         //OUTPUT
                         System.out.println(eval.toSummaryString("=== Stratified cross-validation ===\n" +"=== Summary ===",true));
                         System.out.println(eval.toClassDetailsString("=== Detailed Accuracy By Class ==="));
@@ -96,8 +108,20 @@ public class Main {
                     }
                 case 2:
                     {
-                        classifier.buildClassifier(fileTrain);
-                        eval.crossValidateModel(classifier, fileTrain, 10, new Random(1));
+                        if (classifierChoice == 0){
+                            Discretize filter = new Discretize();
+                            Instances filterRes;
+
+                            //Algoritma
+                            filter.setInputFormat(fileTrain);
+                            filterRes = Filter.useFilter(fileTrain, filter);
+                            
+                            classifier.buildClassifier(filterRes);
+                            eval.crossValidateModel(classifier, filterRes, 10, new Random(1));
+                        } else {
+                            classifier.buildClassifier(fileTrain);
+                            eval.crossValidateModel(classifier, fileTrain, 10, new Random(1));
+                        }
                         
                         //OUTPUT
                         System.out.println(eval.toSummaryString("=== 10-fold-cross-validation ===\n",true));
@@ -121,7 +145,7 @@ public class Main {
                     System.out.print("Please enter the file name : ");
                     String namaFile = scan.next();
                     Classifier cls = (Classifier) weka.core.SerializationHelper.read("models//" + namaFile + ".model");
-                    eval.crossValidateModel(classifier, fileTrain, 10, new Random(1));
+                    eval.crossValidateModel(cls, fileTrain, 10, new Random(1));
                     System.out.println(eval.toSummaryString("=== Stratified cross-validation ===\n" +"=== Summary ===",true));
                     System.out.println(eval.toClassDetailsString("=== Detailed Accuracy By Class ==="));
                     System.out.println(eval.toMatrixString("===Confusion matrix==="));

@@ -28,11 +28,27 @@ import weka.core.Utils;
 
 public class NaiveBayes13514004 implements Classifier, Serializable {
     //Kamus Global
+    public Instances origin;
     public int [][][] data; //Matriks data frekuensi
     public double [][][] prob; //Matiks data probabilitas
     public int [] kelasdata;
     public double [] kelasprob;
     int numClass, numAtt, numDis; 
+    
+    //Reader
+    public Instances readFile(String filename) throws Exception {
+        //Kamus Lokal
+        Instances data = null;
+        BufferedReader reader;
+
+        //Algoritma
+        reader = new BufferedReader(new FileReader(filename));
+        data = new Instances(reader);
+        data.setClassIndex(data.numAttributes() - 1);
+        reader.close();
+
+        return data;
+    }
 
     //Discretize
     public Instances filterData(Instances data) throws Exception {
@@ -50,11 +66,7 @@ public class NaiveBayes13514004 implements Classifier, Serializable {
     @Override
     public void buildClassifier(Instances i) {
         //Algoritma
-        try{
-          i = filterData(i);  
-        } catch(Exception e){
-        }
-        
+        origin = new Instances(i);
         //Menghitung jumlah attribute dan kelas
         numAtt = i.numAttributes()-1;
         numClass = i.numClasses();
@@ -120,7 +132,7 @@ public class NaiveBayes13514004 implements Classifier, Serializable {
     }
 
     @Override
-    public double classifyInstance(Instance i){
+    public double classifyInstance(Instance i) throws Exception{
         //Kamus Lokal
         double max;
         double [] result = new double [numClass];
@@ -137,8 +149,7 @@ public class NaiveBayes13514004 implements Classifier, Serializable {
     }
 
     @Override
-    public double[] distributionForInstance(Instance instnc) {
-        //Kamus Lokal
+    public double[] distributionForInstance(Instance instnc) throws Exception {
         Attribute ins;
         double [] result = new double [numClass];
         
@@ -166,7 +177,7 @@ public class NaiveBayes13514004 implements Classifier, Serializable {
         // attributes
         result.enable(Capabilities.Capability.NOMINAL_ATTRIBUTES);
         result.enable(Capabilities.Capability.NUMERIC_ATTRIBUTES);
-        result.enable(Capabilities.Capability.MISSING_VALUES );
+        result.enable( Capabilities.Capability.MISSING_VALUES );
 
         // class
         result.enable(Capabilities.Capability.NOMINAL_CLASS);
