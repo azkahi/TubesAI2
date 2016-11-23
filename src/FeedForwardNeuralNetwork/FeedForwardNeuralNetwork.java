@@ -40,11 +40,11 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
     public void buildClassifier(Instances instances) throws Exception {
         Instances origin = new Instances(instances);
         // can classifier handle the data?
-        //getCapabilities().testWithFail(instances);
+        getCapabilities().testWithFail(instances);
         
         // remove instances with missing class
-        //instances = new Instances(instances);
-        //instances.deleteWithMissingClass();
+        instances = new Instances(instances);
+        instances.deleteWithMissingClass();
         
         int columnIndex = instances.classIndex() + 1;
         if (instances.classIndex() != instances.numAttributes() -1){
@@ -74,7 +74,6 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
             // set class index
             instances.setClassIndex(instances.numAttributes() - 1);
         }
-
         FFNN = new FeedForwardNeuralNetworkAlgorithm(instances);
         
         //NORMALIZE
@@ -83,8 +82,13 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         instances = Filter.useFilter(instances, normalize);
         normalized = true;
         
+        //RANDOMIZE
+        Randomize randomize = new Randomize();
+        randomize.setInputFormat(instances);
+        instances = Filter.useFilter(instances, randomize);
+        
         FFNN.setOrigin(origin);
-        trainModel(instances,1,100);
+        trainModel(instances,1,30);
     }
     
     
@@ -96,24 +100,21 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         int j = 1;
         //j itu buat ngatur banyaknya iterasi training
         int error = 0;
-        while (FFNN.getSumError() > error && j <= 15000){
+        while (FFNN.getSumError() > error && j <= 10000){
             for (int i = 0; i<instances.size(); i++){
                 FFNN.clearModel();
                 input = instances.get(i).toDoubleArray();
                 FFNN.setInputLayer(input);
                 FFNN.determineOutput(instances.get(i));
                 FFNN.updateModel(instances.get(i));
-                
             }
-            System.out.println(j);
             j++;
         }
     }
     
-
-    
+    //Ini buat nampilin output array
     @Override
-    public double classifyInstance(Instance instance) throws Exception {
+    public double[] distributionForInstance(Instance instance) throws Exception {
         Instance temp = instance;
         Normalize normalize = new Normalize();
         if (normalized){
@@ -131,11 +132,19 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
             result[i] = (FFNN.getNeurons())[FFNN.getNeurons().length-1][i].getOutputValue();
         }
         
-        double max = result[0];
+        return result;
+        
+                
+    }
+    
+    @Override
+    public double classifyInstance(Instance instance) throws Exception {
+        double[] array = distributionForInstance(instance);
+        double max = array[0];
         int idx = 0;
-        for (int i = 1 ; i < result.length ; i++){
-            if (result[i] > max){
-                max = result[i];
+        for (int i = 1 ; i < array.length ; i++){
+            if (array[i] > max){
+                max = array[i];
                 idx = i;
             }
         } 

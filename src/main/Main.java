@@ -75,8 +75,6 @@ public class Main {
                 reorder.setInputFormat(fileTrain);
                 fileTrain = Filter.useFilter(fileTrain, reorder);
 
-
-
                 // set class index
                 fileTrain.setClassIndex(fileTrain.numAttributes() - 1);
             }
@@ -89,7 +87,6 @@ public class Main {
             fileTrain.setClassIndex(classIndex);
 
         }
-        
         
         //Pilih classifier
         System.out.print("Pilih classifier yang akan digunakan (0: NB, 1: FFNN): ");
