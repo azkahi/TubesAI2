@@ -20,6 +20,7 @@ import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.Discretize;
 import weka.filters.unsupervised.attribute.Remove;
+import weka.filters.unsupervised.attribute.Reorder;
 
 /**
  *
@@ -51,6 +52,34 @@ public class Main {
             R.setAttributeIndices("28");
             R.setInputFormat(fileTrain);
             fileTrain.setClassIndex(26);
+            int columnIndex = fileTrain.classIndex() + 1;
+            if (fileTrain.classIndex() != fileTrain.numAttributes() -1){
+                String order = "";
+                for (int i = 1; i < fileTrain.numAttributes() + 1; i++) {
+                  // skip new class
+                  if (i == columnIndex)
+                    continue;
+
+                  if (!order.equals(""))
+                    order += ",";
+                  order += Integer.toString(i);
+                }
+                if (!order.equals(""))
+                  order += ",";
+                order += Integer.toString(columnIndex);
+
+                // process data
+                Reorder reorder = new Reorder();
+                reorder.setAttributeIndices(order);
+                System.out.println(order);
+                reorder.setInputFormat(fileTrain);
+                fileTrain = Filter.useFilter(fileTrain, reorder);
+
+
+
+                // set class index
+                fileTrain.setClassIndex(fileTrain.numAttributes() - 1);
+            }
         }else{
             //Index kelas
             System.out.print("Masukkan index dari atribut yang menjadi kelas "
