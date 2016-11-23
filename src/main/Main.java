@@ -19,6 +19,7 @@ import weka.core.DenseInstance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.Discretize;
+import weka.filters.unsupervised.attribute.Remove;
 
 /**
  *
@@ -44,12 +45,22 @@ public class Main {
         Instances fileTrain = new Instances (breader);
         breader.close();
         
-        //Index kelas
-        System.out.print("Masukkan index dari atribut yang menjadi kelas "
-                + "(-1 untuk last index): ");
-        int classIndex = scan.nextInt();
-        if (classIndex == -1) classIndex = fileTrain.numAttributes() - 1;
-        fileTrain.setClassIndex(classIndex);
+        //Remove if student
+        if (filename.equals("student-train") || fileTrain.equals("student-mat-test")){
+            Remove R = new Remove();
+            R.setAttributeIndices("28");
+            R.setInputFormat(fileTrain);
+            fileTrain.setClassIndex(26);
+        }else{
+            //Index kelas
+            System.out.print("Masukkan index dari atribut yang menjadi kelas "
+                    + "(-1 untuk last index): ");
+            int classIndex = scan.nextInt();
+            if (classIndex == -1) classIndex = fileTrain.numAttributes() - 1;
+            fileTrain.setClassIndex(classIndex);
+
+        }
+        
         
         //Pilih classifier
         System.out.print("Pilih classifier yang akan digunakan (0: NB, 1: FFNN): ");
