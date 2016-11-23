@@ -88,7 +88,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         instances = Filter.useFilter(instances, randomize);
         
         FFNN.setOrigin(origin);
-        trainModel(instances,1,25);
+        trainModel(instances,1,30);
     }
     
     
