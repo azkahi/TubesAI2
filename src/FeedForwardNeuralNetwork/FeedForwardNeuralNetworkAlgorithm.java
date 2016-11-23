@@ -18,7 +18,7 @@ public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
     protected Neuron[][] neurons;
     protected double sumError;
     protected int hidden_layers;
-    protected double learning_rate = 0.3;
+    protected double learning_rate = 0.08;
     private final RandomWrapper rnd = new RandomWrapper();
     
 //Class Output

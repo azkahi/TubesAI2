@@ -6,6 +6,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.unsupervised.attribute.Reorder;
 import weka.filters.Filter;
+import weka.filters.supervised.attribute.Discretize;
 import weka.filters.unsupervised.attribute.NominalToBinary;
 import weka.filters.unsupervised.attribute.Normalize;
 import weka.filters.unsupervised.instance.Randomize;
