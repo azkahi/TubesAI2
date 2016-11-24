@@ -76,11 +76,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         }
         FFNN = new FeedForwardNeuralNetworkAlgorithm(instances);
         
-        //NORMALIZE
-        Normalize normalize = new Normalize();
-        normalize.setInputFormat(instances);
-        instances = Filter.useFilter(instances, normalize);
-        normalized = true;
+        //NTB
         
         //RANDOMIZE
         Randomize randomize = new Randomize();
@@ -88,7 +84,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         instances = Filter.useFilter(instances, randomize);
         
         FFNN.setOrigin(origin);
-        trainModel(instances,1,30);
+        trainModel(instances,1,100);
     }
     
     
@@ -100,7 +96,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         int j = 1;
         //j itu buat ngatur banyaknya iterasi training
         int error = 0;
-        while (FFNN.getSumError() > error && j <= 10000){
+        while (FFNN.getSumError() > error && j <= 1000){
             for (int i = 0; i<instances.size(); i++){
                 FFNN.clearModel();
                 input = instances.get(i).toDoubleArray();

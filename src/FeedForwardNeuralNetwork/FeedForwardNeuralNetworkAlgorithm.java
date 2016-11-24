@@ -18,7 +18,7 @@ public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
     protected Neuron[][] neurons;
     protected double sumError;
     protected int hidden_layers;
-    protected double learning_rate = 0.08;
+    protected double learning_rate = 0.05;
     private final RandomWrapper rnd = new RandomWrapper();
     
 //Class Output
@@ -129,41 +129,43 @@ public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
     
     public void updateModel(Instance curr_instance){
         sumError = countThresholdError(curr_instance);
-        if (hidden_layers == 0){
-            double[] error = countOutputError(curr_instance);
-            for (int i=0 ; i<neurons[1].length; i++){
-                List<Double> current_weights = new ArrayList<>(neurons[1][i].getWeights());
-                for (int j=0; j<current_weights.size() ; j++){
-                    double new_weight = current_weights.get(j) + learning_rate * error[i] * neurons[0][j].getValue();
-                    current_weights.set(j, new_weight);  
+        if (sumError > 0.01){
+            if (hidden_layers == 0){
+                double[] error = countOutputError(curr_instance);
+                for (int i=0 ; i<neurons[1].length; i++){
+                    List<Double> current_weights = new ArrayList<>(neurons[1][i].getWeights());
+                    for (int j=0; j<current_weights.size() ; j++){
+                        double new_weight = current_weights.get(j) + learning_rate * error[i] * neurons[0][j].getValue();
+                        current_weights.set(j, new_weight);  
+                    }
+                    neurons[1][i].setWeights(current_weights);
                 }
-                neurons[1][i].setWeights(current_weights);
+
             }
-            
-        }
-        else if (hidden_layers == 1)
-        {
-            //Update input weights of output layer
-            double[] errorOutput = countOutputError(curr_instance);
-            for (int i=0 ; i<neurons[2].length; i++){
-                List<Double> current_weights = new ArrayList<>(neurons[2][i].getWeights());
-                for (int j=0; j<current_weights.size() ; j++){
-                    double new_weight = current_weights.get(j).doubleValue() + learning_rate * errorOutput[i] * neurons[1][j].getValue();
-                    current_weights.set(j, new Double(new_weight));  
+            else if (hidden_layers == 1)
+            {
+                //Update input weights of output layer
+                double[] errorOutput = countOutputError(curr_instance);
+                for (int i=0 ; i<neurons[2].length; i++){
+                    List<Double> current_weights = new ArrayList<>(neurons[2][i].getWeights());
+                    for (int j=0; j<current_weights.size() ; j++){
+                        double new_weight = current_weights.get(j).doubleValue() + learning_rate * errorOutput[i] * neurons[1][j].getValue();
+                        current_weights.set(j, new Double(new_weight));  
+                    }
+                    neurons[2][i].setWeights(current_weights);
                 }
-                neurons[2][i].setWeights(current_weights);
-            }
-            //Update input weights of hidden layer
-            double[] errorHidden = countHiddenError(curr_instance);
-            for (int i=0 ; i<neurons[1].length; i++){
-                List<Double> current_weights = new ArrayList<>(neurons[1][i].getWeights());
-                for (int j=0; j<current_weights.size() ; j++){
-                    double new_weight = current_weights.get(j).doubleValue() + learning_rate * errorHidden[i] * neurons[0][j].getValue();
-                    current_weights.set(j, new Double(new_weight));  
+                //Update input weights of hidden layer
+                double[] errorHidden = countHiddenError(curr_instance);
+                for (int i=0 ; i<neurons[1].length; i++){
+                    List<Double> current_weights = new ArrayList<>(neurons[1][i].getWeights());
+                    for (int j=0; j<current_weights.size() ; j++){
+                        double new_weight = current_weights.get(j).doubleValue() + learning_rate * errorHidden[i] * neurons[0][j].getValue();
+                        current_weights.set(j, new Double(new_weight));  
+                    }
+                    neurons[1][i].setWeights(current_weights);
                 }
-                neurons[1][i].setWeights(current_weights);
+
             }
-            
         }
     }
     

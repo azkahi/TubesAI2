@@ -19,6 +19,7 @@ import weka.core.DenseInstance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.Discretize;
+import weka.filters.unsupervised.attribute.NominalToBinary;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.attribute.Reorder;
 
@@ -48,10 +49,11 @@ public class Main {
         
         //Remove if student
         if (filename.equals("student-train") || fileTrain.equals("student-mat-test")){
+            
             Remove R = new Remove();
-            R.setAttributeIndices("28");
+            R.setAttributeIndices("27");
             R.setInputFormat(fileTrain);
-            fileTrain.setClassIndex(26);
+            fileTrain.setClassIndex(27);
             int columnIndex = fileTrain.classIndex() + 1;
             if (fileTrain.classIndex() != fileTrain.numAttributes() -1){
                 String order = "";
@@ -105,9 +107,10 @@ public class Main {
             System.out.println("\n\n=================\n==== OPTION ====");
             System.out.println("1. Full Training Scheme");
             System.out.println("2. 10 Fold Validation Scheme");
-            System.out.println("3. Load");
-            System.out.println("4. Create new instance");
-            System.out.println("5. Exit");
+            System.out.println("3. Split Test Scheme (66%-34%)");
+            System.out.println("4. Load");
+            System.out.println("5. Create new instance");
+            System.out.println("6. Exit");
             System.out.print("Enter your option (1/2/3/4/5): ");
             int pilihan = scan.nextInt();
             switch (pilihan) {
@@ -177,6 +180,43 @@ public class Main {
                         }       break;
                     }
                 case 3:
+                    {
+                        int trainSize = (int) Math.round(fileTrain.numInstances() * 66/ 100);
+                        int testSize = fileTrain.numInstances() - trainSize;
+                        Instances train = new Instances(fileTrain, 0, trainSize);
+                        Instances test = new Instances(fileTrain, trainSize, testSize);
+                        if (classifierChoice == 0){
+                            Discretize filter = new Discretize();
+                            Instances filterRes;
+
+                            //Algoritma
+                            filter.setInputFormat(fileTrain);
+                            filterRes = Filter.useFilter(fileTrain, filter);
+                            
+                            classifier.buildClassifier(filterRes);
+                            eval.evaluateModel(classifier, filterRes);
+                        } else {
+                            classifier.buildClassifier(train);
+                            eval.evaluateModel(classifier, test);
+                        }
+                        //OUTPUT
+                        System.out.println(eval.toSummaryString("=== Stratified cross-validation ===\n" +"=== Summary ===",true));
+                        System.out.println(eval.toClassDetailsString("=== Detailed Accuracy By Class ==="));
+                        System.out.println(eval.toMatrixString("===Confusion matrix==="));
+                        System.out.println(eval.fMeasure(1)+" "+eval.recall(1));
+                        System.out.println("\nDo you want to save this model(1/0)? ");
+                        int c = scan.nextInt();
+                        if (c == 1 ){
+                            System.out.print("Please enter your file name (*.model) : ");
+                            String infile = scan.next();
+                            saveModel(classifier, infile);
+                        }
+                        else {
+                            System.out.print("Model not saved.");
+                        }       
+                        break;
+                    }
+                case 4:
                     //LOAD
                     // deserialize model
                     System.out.print("Please enter the file name : ");
@@ -188,7 +228,7 @@ public class Main {
                     System.out.println(eval.toMatrixString("===Confusion matrix==="));
                     System.out.println(eval.fMeasure(1)+" "+eval.recall(1));
                     break;
-                case 4:
+                case 5:
                     System.out.println();
                     //ADD New Instance
                     //Copy attributes from instances
@@ -208,7 +248,7 @@ public class Main {
                     fileTrain.add(buffer);
                     System.out.println("Class: " + buffer.stringValue(fileTrain.classIndex()));
                     break;
-                case 5:
+                case 6:
                     validasi = true;
                     break;
                 default:
