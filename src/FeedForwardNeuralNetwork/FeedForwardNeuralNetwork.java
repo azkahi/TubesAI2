@@ -83,16 +83,6 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         randomize.setInputFormat(instances);
         instances = Filter.useFilter(instances, randomize);
         
-        //RANDOMIZE
-        Randomize randomize = new Randomize();
-        randomize.setInputFormat(instances);
-        instances = Filter.useFilter(instances, randomize);
-        
-        //RANDOMIZE
-        Randomize randomize = new Randomize();
-        randomize.setInputFormat(instances);
-        instances = Filter.useFilter(instances, randomize);
-        
         FFNN.setOrigin(origin);
         trainModel(instances,1,30);
     }
