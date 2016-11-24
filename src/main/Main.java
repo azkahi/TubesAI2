@@ -20,8 +20,12 @@ import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.Discretize;
 import weka.filters.unsupervised.attribute.NominalToBinary;
+import weka.filters.unsupervised.attribute.Normalize;
+import weka.filters.unsupervised.attribute.NumericTransform;
 import weka.filters.unsupervised.attribute.Remove;
+import weka.filters.unsupervised.attribute.RemoveUseless;
 import weka.filters.unsupervised.attribute.Reorder;
+import weka.filters.unsupervised.attribute.Standardize;
 
 /**
  *
@@ -47,13 +51,14 @@ public class Main {
         Instances fileTrain = new Instances (breader);
         breader.close();
         
+        
         //Remove if student
-        if (filename.equals("student-train") || fileTrain.equals("student-mat-test")){
+        if (filename.equals("student-train") || filename.equals("student-mat-test")){
             
             Remove R = new Remove();
             R.setAttributeIndices("27");
             R.setInputFormat(fileTrain);
-            fileTrain.setClassIndex(27);
+            fileTrain.setClassIndex(27);/*
             int columnIndex = fileTrain.classIndex() + 1;
             if (fileTrain.classIndex() != fileTrain.numAttributes() -1){
                 String order = "";
@@ -79,8 +84,9 @@ public class Main {
 
                 // set class index
                 fileTrain.setClassIndex(fileTrain.numAttributes() - 1);
-            }
+            }*/
         }else{
+            
             //Index kelas
             System.out.print("Masukkan index dari atribut yang menjadi kelas "
                     + "(-1 untuk last index): ");
@@ -97,6 +103,27 @@ public class Main {
             classifier = new NaiveBayes13514004();
         } else {    
             classifier = new FeedForwardNeuralNetwork();
+            if (!filename.equals("iris")){
+                //Nominal to Binary
+                
+                NominalToBinary ntb = new NominalToBinary();
+                ntb.setInputFormat(fileTrain);
+                fileTrain = Filter.useFilter(fileTrain, ntb);
+                System.out.println("ntb used woi\n");
+                
+                Standardize nor = new Standardize();
+                nor.setInputFormat(fileTrain);
+                fileTrain = Filter.useFilter(fileTrain, nor);
+                System.out.println("nor used woi\n");
+                //NormalizeS
+                Normalize nor1 = new Normalize();
+                nor1.setInputFormat(fileTrain);
+                fileTrain = Filter.useFilter(fileTrain, nor1);
+                System.out.println("nor1 used woi\n");
+                
+                        
+                 
+            }
         }
        
         //Evaluate

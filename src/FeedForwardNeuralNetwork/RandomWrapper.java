@@ -6,33 +6,22 @@ import java.util.Random;
 
 public class RandomWrapper implements Serializable
 {
-	private long seed;
-	
 	private Random rand;
 	
-	public RandomWrapper(long aSeed)
+	public RandomWrapper()
 	{
-		seed = aSeed;
-		rand = new Random(aSeed);
+		rand = new Random();
 	}
 	
 	public void recreate()
 	{
-		rand = new Random(seed);
+		rand = new Random();
 	}
 
-	public RandomWrapper()
-	{
-		this(System.currentTimeMillis());
-	}	
 	
 	public Random getRand()
 	{
 		return rand;
 	}
 
-	public long getSeed()
-	{
-		return seed;
-	}
 }

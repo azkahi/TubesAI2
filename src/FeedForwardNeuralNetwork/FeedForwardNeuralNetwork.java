@@ -45,7 +45,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         // remove instances with missing class
         instances = new Instances(instances);
         instances.deleteWithMissingClass();
-        
+        /*
         int columnIndex = instances.classIndex() + 1;
         if (instances.classIndex() != instances.numAttributes() -1){
             String order = "";
@@ -74,17 +74,15 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
             // set class index
             instances.setClassIndex(instances.numAttributes() - 1);
         }
+        */
         FFNN = new FeedForwardNeuralNetworkAlgorithm(instances);
         
-        //NTB
         
-        //RANDOMIZE
-        Randomize randomize = new Randomize();
-        randomize.setInputFormat(instances);
-        instances = Filter.useFilter(instances, randomize);
         
-        FFNN.setOrigin(origin);
-        trainModel(instances,1,30);
+        
+        
+        
+        trainModel(instances,1,50);
     }
     
     
@@ -96,56 +94,36 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         int j = 1;
         //j itu buat ngatur banyaknya iterasi training
         int error = 0;
-        while (FFNN.getSumError() > error && j <= 1000){
+        FFNN.printModel();
+        FFNN.printAllWeights();
+        while (FFNN.getSumError() > error && j <= 5000){
             for (int i = 0; i<instances.size(); i++){
                 FFNN.clearModel();
                 input = instances.get(i).toDoubleArray();
                 FFNN.setInputLayer(input);
                 FFNN.determineOutput(instances.get(i));
                 FFNN.updateModel(instances.get(i));
+                /*
+               System.out.println("\n\nIterasi "+i);
+               System.out.println("Target = "+instances.get(i).classValue()+" Output = "+FFNN.getClassOutputValues());
+               System.out.println("Instance = "+instances.get(i).toString());
+               FFNN.printModel();
+               FFNN.printAllWeights();*/
+                
             }
+            System.out.println(j);
             j++;
         }
     }
     
-    //Ini buat nampilin output array
-    @Override
-    public double[] distributionForInstance(Instance instance) throws Exception {
-        Instance temp = instance;
-        Normalize normalize = new Normalize();
-        if (normalized){
-            FFNN.getOrigin().add(instance);
-            normalize.setInputFormat(FFNN.getOrigin());
-            temp = Filter.useFilter(FFNN.getOrigin(), normalize).lastInstance();
-            FFNN.getOrigin().remove(FFNN.getOrigin().lastInstance());
-        }
-        
-        FFNN.setInputLayer(temp.toDoubleArray());
-        FFNN.determineOutput(temp);
-        FFNN.updateModel(temp);
-        double[] result = new double[(FFNN.getNeurons())[FFNN.getNeurons().length-1].length];
-        for (int i = 0 ; i < result.length ; i++){
-            result[i] = (FFNN.getNeurons())[FFNN.getNeurons().length-1][i].getOutputValue();
-        }
-        
-        return result;
-        
-                
-    }
+
+    
     
     @Override
     public double classifyInstance(Instance instance) throws Exception {
-        double[] array = distributionForInstance(instance);
-        double max = array[0];
-        int idx = 0;
-        for (int i = 1 ; i < array.length ; i++){
-            if (array[i] > max){
-                max = array[i];
-                idx = i;
-            }
-        } 
-         
-        return idx;
+        
+        FFNN.setInputLayer(instance.toDoubleArray());
+        return FFNN.countOutput(instance);
     }
     
     @Override

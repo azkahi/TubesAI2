@@ -18,7 +18,7 @@ public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
     protected Neuron[][] neurons;
     protected double sumError;
     protected int hidden_layers;
-    protected double learning_rate = 0.05;
+    protected double learning_rate = 0.03;
     private final RandomWrapper rnd = new RandomWrapper();
     
 //Class Output
@@ -57,7 +57,7 @@ public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
             for (int j=0; j< neuron_hidden_layer; j++){
                 neurons[1][j] = new Neuron();
                 for (int i=0; i<neurons[0].length; i++){
-                    double temp = rnd.getRand().nextDouble();
+                    double temp = /*Math.random() * */Math.pow(-1, i);
                     arr.add(temp);
                 }
                 neurons[1][j].setWeights(arr);
@@ -68,7 +68,7 @@ public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
             for (int j=0; j< instances.numClasses(); j++){
                 neurons[2][j] = new Neuron();
                 for (int i=0; i<neurons[1].length; i++){
-                    double temp = rnd.getRand().nextDouble();
+                    double temp = Math.random() * Math.pow(-1, i);
                     arr.add(temp);
                 }
                 neurons[2][j].setWeights(arr);
@@ -81,7 +81,7 @@ public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
             for (int j=0; j< instances.numClasses(); j++){
                 neurons[1][j] = new Neuron();
                 for (int i=0; i<neurons[0].length; i++){
-                    double temp = rnd.getRand().nextDouble();
+                    double temp = Math.random() * Math.pow(-1, i);
                     arr.add(temp);
                 }
                 neurons[1][j].setWeights(arr);
@@ -129,43 +129,41 @@ public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
     
     public void updateModel(Instance curr_instance){
         sumError = countThresholdError(curr_instance);
-        if (sumError > 0.01){
-            if (hidden_layers == 0){
-                double[] error = countOutputError(curr_instance);
-                for (int i=0 ; i<neurons[1].length; i++){
-                    List<Double> current_weights = new ArrayList<>(neurons[1][i].getWeights());
-                    for (int j=0; j<current_weights.size() ; j++){
-                        double new_weight = current_weights.get(j) + learning_rate * error[i] * neurons[0][j].getValue();
-                        current_weights.set(j, new_weight);  
-                    }
-                    neurons[1][i].setWeights(current_weights);
+        if (hidden_layers == 0){
+            double[] error = countOutputError(curr_instance);
+            for (int i=0 ; i<neurons[1].length; i++){
+                List<Double> current_weights = new ArrayList<>(neurons[1][i].getWeights());
+                for (int j=0; j<current_weights.size() ; j++){
+                    double new_weight = current_weights.get(j) + learning_rate * error[i] * neurons[0][j].getValue();
+                    current_weights.set(j, new_weight);  
                 }
-
+                neurons[1][i].setWeights(current_weights);
             }
-            else if (hidden_layers == 1)
-            {
-                //Update input weights of output layer
-                double[] errorOutput = countOutputError(curr_instance);
-                for (int i=0 ; i<neurons[2].length; i++){
-                    List<Double> current_weights = new ArrayList<>(neurons[2][i].getWeights());
-                    for (int j=0; j<current_weights.size() ; j++){
-                        double new_weight = current_weights.get(j).doubleValue() + learning_rate * errorOutput[i] * neurons[1][j].getValue();
-                        current_weights.set(j, new Double(new_weight));  
-                    }
-                    neurons[2][i].setWeights(current_weights);
+            
+        }
+        else if (hidden_layers == 1)
+        {
+            //Update input weights of output layer
+            double[] errorOutput = countOutputError(curr_instance);
+            for (int i=0 ; i<neurons[2].length; i++){
+                List<Double> current_weights = new ArrayList<>(neurons[2][i].getWeights());
+                for (int j=0; j<current_weights.size() ; j++){
+                    double new_weight = current_weights.get(j).doubleValue() + learning_rate * errorOutput[i] * neurons[1][j].getValue();
+                    current_weights.set(j, new Double(new_weight));  
                 }
-                //Update input weights of hidden layer
-                double[] errorHidden = countHiddenError(curr_instance);
-                for (int i=0 ; i<neurons[1].length; i++){
-                    List<Double> current_weights = new ArrayList<>(neurons[1][i].getWeights());
-                    for (int j=0; j<current_weights.size() ; j++){
-                        double new_weight = current_weights.get(j).doubleValue() + learning_rate * errorHidden[i] * neurons[0][j].getValue();
-                        current_weights.set(j, new Double(new_weight));  
-                    }
-                    neurons[1][i].setWeights(current_weights);
-                }
-
+                neurons[2][i].setWeights(current_weights);
             }
+            //Update input weights of hidden layer
+            double[] errorHidden = countHiddenError(curr_instance);
+            for (int i=0 ; i<neurons[1].length; i++){
+                List<Double> current_weights = new ArrayList<>(neurons[1][i].getWeights());
+                for (int j=0; j<current_weights.size() ; j++){
+                    double new_weight = current_weights.get(j).doubleValue() + learning_rate * errorHidden[i] * neurons[0][j].getValue();
+                    current_weights.set(j, new Double(new_weight));  
+                }
+                neurons[1][i].setWeights(current_weights);
+            }
+            
         }
     }
     
@@ -246,11 +244,42 @@ public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
     }
     
     public double countOutput(Instance instance){
+        double[] result = countOutputs(instance);
+        double finale_result = -1.0;
+        
+        double max = neurons[neurons.length - 1][0].getValue(); //Initialize
+        //Cari nilai maksimal, karena kelas hanya bisa satu, sehingga kelas lain 
+        //nilainya 0, sementara kelas maksimal diberi nilai 1
+        for (int k = 1; k < instance.numClasses(); k++) {
+            if (max < neurons[neurons.length - 1][k].getValue()) {
+                max = neurons[neurons.length - 1][k].getValue();
+            }
+        }
+        for (int k = 0; k < instance.numClasses(); k++) {
+            if (max != neurons[neurons.length - 1][k].getValue()) {
+                neurons[neurons.length - 1][k].setOutputValue(0);
+            } else {
+                neurons[neurons.length - 1][k].setOutputValue(1);
+            }
+            result[k] = neurons[neurons.length - 1][k].getOutputValue();
+        }
+        //Deciding class
+        //If final_result = array result element which contains 1
+        for (int i = 0; i < instance.numClasses(); i++) {
+            if (result[i] == 1.0) {
+                finale_result = i;
+                break;
+            }
+        }
+
+        return finale_result;
+    }
+    
+    public double[] countOutputs(Instance instance){
        // System.out.println("Count output invoked");
         setInputLayer(instance.toDoubleArray());
         
         double[] result = new double[instance.numClasses()];
-        double finale_result = -1.0;
         if (hidden_layers == 0){
             //Masukkan input ke input layer
             for (int i=0; i<instance.numAttributes()-1;i++){
@@ -304,32 +333,7 @@ public class FeedForwardNeuralNetworkAlgorithm implements java.io.Serializable {
            throw new RuntimeException("Illegal n_hidden_layer");
         }
         
-        double max = neurons[neurons.length-1][0].getValue(); //Initialize
-            //Cari nilai maksimal, karena kelas hanya bisa satu, sehingga kelas lain 
-            //nilainya 0, sementara kelas maksimal diberi nilai 1
-            for (int k = 1; k < instance.numClasses(); k++){
-                if (max < neurons[neurons.length-1][k].getValue()){
-                    max = neurons[neurons.length-1][k].getValue();
-                }
-            }
-            for (int k = 0; k < instance.numClasses(); k++){
-                if (max != neurons[neurons.length-1][k].getValue()){
-                    neurons[neurons.length-1][k].setOutputValue(0);
-                } else {
-                    neurons[neurons.length-1][k].setOutputValue(1);
-                }
-                result[k] = neurons[neurons.length-1][k].getOutputValue();
-            }
-        //Deciding class
-        //If final_result = array result element which contains 1
-        for (int i = 0; i<instance.numClasses(); i++){
-            if (result[i] == 1.0){
-                finale_result = i;
-                break;
-            }
-        }
-        
-        return finale_result;
+        return result;
     }
     
     public void printAllWeights(){
