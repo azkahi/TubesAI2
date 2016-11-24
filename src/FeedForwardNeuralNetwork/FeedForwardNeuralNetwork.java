@@ -88,6 +88,11 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         randomize.setInputFormat(instances);
         instances = Filter.useFilter(instances, randomize);
         
+        //RANDOMIZE
+        Randomize randomize = new Randomize();
+        randomize.setInputFormat(instances);
+        instances = Filter.useFilter(instances, randomize);
+        
         FFNN.setOrigin(origin);
         trainModel(instances,1,30);
     }
@@ -101,11 +106,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         int j = 1;
         //j itu buat ngatur banyaknya iterasi training
         int error = 0;
-<<<<<<< HEAD
         while (FFNN.getSumError() > error && j <= 1000){
-=======
-        while (FFNN.getSumError() > error && j <= 10000){
->>>>>>> parent of add6e64... udah bisa,masih 69
             for (int i = 0; i<instances.size(); i++){
                 FFNN.clearModel();
                 input = instances.get(i).toDoubleArray();
