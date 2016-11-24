@@ -50,7 +50,7 @@ public class Main {
         breader = new BufferedReader(new FileReader("arff//"+ filename +".arff"));
         Instances fileTrain = new Instances (breader);
         breader.close();
-        
+  
         
         //Remove if student
         if (filename.equals("student-train") || filename.equals("student-mat-test")){
@@ -58,7 +58,9 @@ public class Main {
             Remove R = new Remove();
             R.setAttributeIndices("27");
             R.setInputFormat(fileTrain);
-            fileTrain.setClassIndex(27);/*
+            fileTrain = Filter.useFilter(fileTrain, R);
+            fileTrain.setClassIndex(26);
+            /*
             int columnIndex = fileTrain.classIndex() + 1;
             if (fileTrain.classIndex() != fileTrain.numAttributes() -1){
                 String order = "";
@@ -105,24 +107,19 @@ public class Main {
             classifier = new FeedForwardNeuralNetwork();
             if (!filename.equals("iris")){
                 //Nominal to Binary
-                
                 NominalToBinary ntb = new NominalToBinary();
                 ntb.setInputFormat(fileTrain);
                 fileTrain = Filter.useFilter(fileTrain, ntb);
-                System.out.println("ntb used woi\n");
                 
+                //Standardize
                 Standardize nor = new Standardize();
                 nor.setInputFormat(fileTrain);
                 fileTrain = Filter.useFilter(fileTrain, nor);
-                System.out.println("nor used woi\n");
+                
                 //NormalizeS
                 Normalize nor1 = new Normalize();
                 nor1.setInputFormat(fileTrain);
                 fileTrain = Filter.useFilter(fileTrain, nor1);
-                System.out.println("nor1 used woi\n");
-                
-                        
-                 
             }
         }
        
@@ -137,7 +134,7 @@ public class Main {
             System.out.println("4. Load");
             System.out.println("5. Create new instance");
             System.out.println("6. Exit");
-            System.out.print("Enter your option (1/2/3/4/5): ");
+            System.out.print("Enter your option (1/2/3/4/5/6): ");
             int pilihan = scan.nextInt();
             switch (pilihan) {
                 case 1:

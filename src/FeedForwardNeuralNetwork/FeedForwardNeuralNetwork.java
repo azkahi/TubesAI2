@@ -45,43 +45,7 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         // remove instances with missing class
         instances = new Instances(instances);
         instances.deleteWithMissingClass();
-        /*
-        int columnIndex = instances.classIndex() + 1;
-        if (instances.classIndex() != instances.numAttributes() -1){
-            String order = "";
-            for (int i = 1; i < instances.numAttributes() + 1; i++) {
-              // skip new class
-              if (i == columnIndex)
-                continue;
-
-              if (!order.equals(""))
-                order += ",";
-              order += Integer.toString(i);
-            }
-            if (!order.equals(""))
-              order += ",";
-            order += Integer.toString(columnIndex);
-
-            // process data
-            Reorder reorder = new Reorder();
-            reorder.setAttributeIndices(order);
-            System.out.println(order);
-            reorder.setInputFormat(instances);
-            instances = Filter.useFilter(instances, reorder);
-            
-            
-
-            // set class index
-            instances.setClassIndex(instances.numAttributes() - 1);
-        }
-        */
         FFNN = new FeedForwardNeuralNetworkAlgorithm(instances);
-        
-        
-        
-        
-        
-        
         trainModel(instances,1,50);
     }
     
@@ -94,8 +58,6 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
         int j = 1;
         //j itu buat ngatur banyaknya iterasi training
         int error = 0;
-        FFNN.printModel();
-        FFNN.printAllWeights();
         while (FFNN.getSumError() > error && j <= 5000){
             for (int i = 0; i<instances.size(); i++){
                 FFNN.clearModel();
@@ -103,15 +65,8 @@ public class FeedForwardNeuralNetwork extends AbstractClassifier implements java
                 FFNN.setInputLayer(input);
                 FFNN.determineOutput(instances.get(i));
                 FFNN.updateModel(instances.get(i));
-                /*
-               System.out.println("\n\nIterasi "+i);
-               System.out.println("Target = "+instances.get(i).classValue()+" Output = "+FFNN.getClassOutputValues());
-               System.out.println("Instance = "+instances.get(i).toString());
-               FFNN.printModel();
-               FFNN.printAllWeights();*/
-                
             }
-            System.out.println(j);
+            if (j % 100 == 0) System.out.println(j);
             j++;
         }
     }
