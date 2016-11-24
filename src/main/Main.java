@@ -19,9 +19,12 @@ import weka.core.DenseInstance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.Discretize;
+<<<<<<< HEAD
 import weka.filters.unsupervised.attribute.NominalToBinary;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.attribute.Reorder;
+=======
+>>>>>>> parent of add6e64... udah bisa,masih 69
 
 /**
  *
